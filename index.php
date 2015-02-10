@@ -229,7 +229,7 @@ else
 
 <div class='noPrint'>
 <div id="footer">
-<p>2011 &middot; Joakim Näsvall and Erik Gullberg &middot; This page was last updated 2013-01-22 by Joakim Näsvall (finally fixed some anoying bugs)</p>
+<p>2011 &middot; Joakim Näsvall and Erik Gullberg and Ásgeir &middot; This page was last updated 2013-01-22 by Joakim Näsvall (finally fixed some anoying bugs)</p>
 </div>
 </div>
 </div>
