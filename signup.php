@@ -97,10 +97,12 @@ if ($sLength >= 2 && $sLength <= 20) {
 	//	Write to the database
 	//====================================================================
 	if ($errorMessage == "") {
-        include('../local/datalogin.php');
+        include('/var/local/datalogin.php');
         
-	$db_handle = mysql_connect($dbhost, $dbusername, $dbuserpass);
-	$db_found = mysql_select_db($dbname, $db_handle);
+	$db_handle = mysqli_connect($dbhost, $dbusername, $dbuserpass, $dbname);
+	$db_found = $db_handle 
+	
+	# mysql_select_db($dbname, $db_handle);
 
 	if ($db_found) {
 
@@ -113,8 +115,8 @@ if ($sLength >= 2 && $sLength <= 20) {
 	//====================================================================
 
 		$SQL = "SELECT * FROM users WHERE Username = $uname OR Signature = $sign";
-		$result = mysql_query($SQL);
-		$num_rows = mysql_num_rows($result);
+		$result = mysqli_query($SQL);
+		$num_rows = mysqli_num_rows($result);
 
 		if ($num_rows > 0) {
 			$errorMessage = "Username or Signature already taken";
@@ -124,9 +126,9 @@ if ($sLength >= 2 && $sLength <= 20) {
 
 			$SQL = "INSERT INTO users (Username, Usertype, Password, Signature) VALUES ($uname, $type, md5($pword), $sign)";
 
-			$result = mysql_query($SQL) or die ("ERROR". mysql_error()."<br>". "$SQL");
+			$result = mysqli_query($SQL) or die ("ERROR". mysqli_error()."<br>". "$SQL");
 
-			mysql_close($db_handle);
+			mysqli_close($db_handle);
 
 		//=================================================================================
 		//	START THE SESSION AND PUT SOMETHING INTO THE SESSION VARIABLE CALLED login
