@@ -12,13 +12,11 @@ if (mysqli_connect_errno())
 	echo "Failed to connect to MySQL: " . mysqli_connect_error();
 }
 
-$db_found = $db_handle;
 
-
-   if ($db_found)
+   if ($db_handle)
    {
-	$SQL = "SELECT * FROM users WHERE Username = '". mysql_real_escape_string($_SESSION['user']['username']) . "'";
-	$result = mysqli_query($SQL) or die(mysqli_error());
+	$SQL = "SELECT * FROM users WHERE Username = '". mysqli_real_escape_string($_SESSION['user']['username']) . "'";
+	$result = mysqli_query($db_handle, $SQL) or die(mysqli_error());
 	$num_rows = mysqli_num_rows($result) or die(mysqli_error($result));
 		if ($result)
 		{
