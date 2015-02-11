@@ -100,7 +100,7 @@ if ($sLength >= 2 && $sLength <= 20) {
         include('/var/local/datalogin.php');
         
 	$db_handle = mysqli_connect($dbhost, $dbusername, $dbuserpass, $dbname);
-	$db_found = $db_handle 
+	$db_found = $db_handle; 
 	
 	# mysql_select_db($dbname, $db_handle);
 
