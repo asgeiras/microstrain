@@ -4,11 +4,15 @@ ini_set('display_errors', 1);
 
 // Create MySQL connection
 include ("/var/local/datalogin.php");
-$db_handle = mysqli_connect($dbhost, $dbusername, $dbuserpass) or die(mysqli_error());
-$db_found = mysqli_select_db($db_handle, $dbname) or die(mysqli_error());
+$db_handle = new mysqli($dbhost, $dbusername, $dbuserpass);
 
+// Check connection
+if (mysqli_connect_errno())
+{
+	echo "Failed to connect to MySQL: " . mysqli_connect_error();
+}
 
-
+$db_found = mysqli_select_db($dbhandle, $dbname);
 
 
    if ($db_found)
