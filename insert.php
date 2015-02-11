@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 
 // Create MySQL connection
 include ("/var/local/datalogin.php");
-$db_handle = new mysqli($dbhost, $dbusername, $dbuserpass);
+$dbhandle = new mysqli($dbhost, $dbusername, $dbuserpass);
 
 // Check connection
 if (mysqli_connect_errno())
