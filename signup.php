@@ -117,7 +117,7 @@ if ($sLength >= 2 && $sLength <= 20) {
 	//====================================================================
 
 		$SQL = "SELECT * FROM users WHERE Username = $uname OR Signature = $sign";
-		$result = mysqli_query($SQL);
+		$result = mysqli_query($db_found, $SQL);
 		$num_rows = mysqli_num_rows($result);
 
 		if ($num_rows > 0) {
@@ -128,7 +128,7 @@ if ($sLength >= 2 && $sLength <= 20) {
 
 			$SQL = "INSERT INTO users (Username, Usertype, Password, Signature) VALUES ($uname, $type, md5($pword), $sign)";
 
-			$result = mysqli_query($SQL) or die ("ERROR". mysqli_error()."<br>". "$SQL");
+			$result = mysqli_query($db_handle, $SQL) or die ("ERROR". mysqli_error($db_handle)."<br>". "$SQL");
 
 			mysqli_close($db_handle);
 
