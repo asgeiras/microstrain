@@ -209,7 +209,7 @@ elseif (($value == 'addUser') && ($_GET['save'] == 'success'))
  {
  echo "<span style='font-weight: bold'>Success!</span><br> The new user was successfully added.";
  $helpmessage = "To log in as the new user,<A HREF = index.php?logout=1> log out ". $_SESSION['user']. "</A>.";
- $helpmessage2 = "";
+ $helpmessage2 = "tralalala";
  //include("signup.php");
  }
 else
