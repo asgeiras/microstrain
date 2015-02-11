@@ -15,7 +15,7 @@ $db_handle = new mysqli($dbhost, $dbusername, $dbuserpass, $dbname) or die(mysql
 
    if ($db_handle)
    {
-	$SQL = "SELECT * FROM users WHERE Username = '". mysqli_real_escape_string($_SESSION['user']) . "'";
+	$SQL = "SELECT * FROM users WHERE Username = '". mysqli_real_escape_string($db_handle, $_SESSION['user']) . "'";
 	$result = mysqli_query($db_handle, $SQL) or die(mysqli_error());
 	$num_rows = mysqli_num_rows($result) or die(mysqli_error($result));
 		if ($result)
