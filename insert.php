@@ -93,7 +93,7 @@ else
 $sel = "";  
 }  
 ?>  
-<option value="<?php=$_SERVER['PHP_SELF'];?>?mode=add&Line=<?php=$i;?>" <?php=$sel;?> > <?php=$i;?></option>  
+// <option value="<?php=$_SERVER['PHP_SELF'];?>?mode=add&Line=<?php=$i;?>" <?php=$sel;?> > <?php=$i;?></option>  
 <?php
 }  
 ?> 
