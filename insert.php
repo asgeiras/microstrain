@@ -7,15 +7,15 @@ include ("/var/local/datalogin.php");
 $db_handle = new mysqli($dbhost, $dbusername, $dbuserpass, $dbname);
 
 // Check connection
-if (mysqli_connect_errno())
+if (!$db_handle)
 {
-	echo "Failed to connect to MySQL: " . mysqli_connect_error();
+	die('Failed to connect to MySQL, error: ' . mysqli_connect_errno();
 }
 
 
    if ($db_handle)
    {
-	$SQL = "SELECT * FROM users WHERE Username = '". mysqli_real_escape_string($_SESSION['user']['username']) . "'";
+	$SQL = "SELECT * FROM users WHERE Username = '". mysqli_real_escape_string($db_handle, $_SESSION['user']['username']) . "'";
 	$result = mysqli_query($db_handle, $SQL) or die(mysqli_error());
 	$num_rows = mysqli_num_rows($result) or die(mysqli_error($result));
 		if ($result)
