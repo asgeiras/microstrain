@@ -168,7 +168,7 @@ if ($sLength >= 2 && $sLength <= 20) {
 	<body>
 <?php
 
-if ($_GET['save'] != "success")
+if ($_GET['save'] != "success");
 {
 ?>
 <FORM NAME ="form1" METHOD ="POST" ACTION ="index.php?mode=addUser">
