@@ -25,7 +25,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
 <body>
 
 <div id="container" >
-<div id="toplinks" class='noPrint'><p>Welcome to the machine. Today is <?php echo date('M d, Y'); ?>.<br>
+<div id="toplinks" class='noPrint'><p>Welcome to the strains database. Today is <?php echo date('M d, Y'); ?>.<br>
 <?php	if (!(isset($_SESSION['login']) && $_SESSION['login'] != ''))
 	{
 	echo "You are not logged in.";
@@ -209,7 +209,6 @@ elseif (($value == 'addUser') && ($_GET['save'] == 'success'))
  {
  echo "<span style='font-weight: bold'>Success!</span><br> The new user was successfully added.";
  $helpmessage = "To log in as the new user,<A HREF = index.php?logout=1> log out ". $_SESSION['user']. "</A>.";
- $helpmessage2 = "tralalala";
  //include("signup.php");
  }
 else
@@ -224,13 +223,13 @@ else
 <div class='noPrint'>
 
 <br><br>
-<p class="block"><strong>Please note:</strong> <?php echo $helpmessage, " ", $helpmessage2;?></p>
+<p class="block"><strong>Please note:</strong> <?php echo $helpmessage;?></p>
 </div>    
 </div>
 
 <div class='noPrint'>
 <div id="footer">
-<p>2011 &middot; Joakim Näsvall and Erik Gullberg and Ásgeir &middot; This page was last updated 2013-01-22 by Joakim Näsvall (finally fixed some anoying bugs)</p>
+<p>2011 &middot; Joakim Näsvall and Erik Gullberg &middot; This page was last updated 2013-01-22 by Joakim Näsvall (finally fixed some anoying bugs)</p>
 </div>
 </div>
 </div>
