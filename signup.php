@@ -44,10 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 	$pword = $_POST['password'];
 	$sign = $_POST['signature'];
 
-	$uname = htmlspecialchars($uname);
-        $type = htmlspecialchars($type);
-	$pword = htmlspecialchars($pword);
-	$sign = htmlspecialchars($sign);
+	$uname = htmlspecialchars($uname, ENT_COMPAT, 'ISO-8859-1', true);
+        $type = htmlspecialchars($type, ENT_COMPAT, 'ISO-8859-1', true);
+	$pword = htmlspecialchars($pword, ENT_COMPAT, 'ISO-8859-1', true);
+	$sign = htmlspecialchars($sign, ENT_COMPAT, 'ISO-8859-1', true);
 	//====================================================================
 	//	CHECK TO SEE IF U AND P ARE OF THE CORRECT LENGTH
 	//	A MALICIOUS USER MIGHT TRY TO PASS A STRING THAT IS TOO LONG
