@@ -4,13 +4,13 @@ ini_set('display_errors', 1);
 
 // Create MySQL connection
 include ("/var/local/datalogin.php");
-$db_handle = new mysqli($dbhost, $dbusername, $dbuserpass, $dbname);
+$db_handle = new mysqli($dbhost, $dbusername, $dbuserpass, $dbname) or die(mysql_error());
 
 // Check connection
-if (!$db_handle)
-{
-	die('Failed to connect to MySQL, error: ' . mysqli_connect_errno();
-}
+// if ($db_handle)
+// {
+//	die('Failed to connect to MySQL, error: ' . mysqli_connect_errno();
+// }
 
 
    if ($db_handle)
