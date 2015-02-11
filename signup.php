@@ -29,7 +29,7 @@ function quote_smart($value, $handle) {
    }
 
    if (!is_numeric($value)) {
-       $value = "'" . mysql_real_escape_string($value, $handle) . "'";
+       $value = "'" . mysqli_real_escape_string($handle, $value) . "'";
    }
    return $value;
 }
