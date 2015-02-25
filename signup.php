@@ -1,6 +1,4 @@
 <?php
-error_reporting(~0);
-ini_set('display_errors', 0);
 //session_start();
 //if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
 	//header ("Location: login.php");
@@ -22,6 +20,7 @@ $type = "";
 $errorMessage = "";
 $num_rows = 0;
 $helpmessage = "Username must be between 5 and 20 characters, password between 8 and 16 characters and signature between 2 and 20 characters.";
+
 function quote_smart($value, $handle) {
 
    if (get_magic_quotes_gpc()) {
@@ -29,7 +28,7 @@ function quote_smart($value, $handle) {
    }
 
    if (!is_numeric($value)) {
-       $value = "'" . mysqli_real_escape_string($handle, $value) . "'";
+       $value = "'" . mysql_real_escape_string($value, $handle) . "'";
    }
    return $value;
 }
@@ -44,10 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 	$pword = $_POST['password'];
 	$sign = $_POST['signature'];
 
-	$uname = htmlspecialchars($uname, ENT_COMPAT, 'ISO-8859-1', true);
-        $type = htmlspecialchars($type, ENT_COMPAT, 'ISO-8859-1', true);
-	$pword = htmlspecialchars($pword, ENT_COMPAT, 'ISO-8859-1', true);
-	$sign = htmlspecialchars($sign, ENT_COMPAT, 'ISO-8859-1', true);
+	$uname = htmlspecialchars($uname);
+        $type = htmlspecialchars($type);
+	$pword = htmlspecialchars($pword);
+	$sign = htmlspecialchars($sign);
 	//====================================================================
 	//	CHECK TO SEE IF U AND P ARE OF THE CORRECT LENGTH
 	//	A MALICIOUS USER MIGHT TRY TO PASS A STRING THAT IS TOO LONG
@@ -99,12 +98,10 @@ if ($sLength >= 2 && $sLength <= 20) {
 	//	Write to the database
 	//====================================================================
 	if ($errorMessage == "") {
-        include('/var/local/datalogin.php');
+        include('../local/datalogin.php');
         
-	$db_handle = mysqli_connect($dbhost, $dbusername, $dbuserpass, $dbname);
-	$db_found = $db_handle; 
-	
-	# mysql_select_db($dbname, $db_handle);
+	$db_handle = mysql_connect($dbhost, $dbusername, $dbuserpass);
+	$db_found = mysql_select_db($dbname, $db_handle);
 
 	if ($db_found) {
 
@@ -117,8 +114,8 @@ if ($sLength >= 2 && $sLength <= 20) {
 	//====================================================================
 
 		$SQL = "SELECT * FROM users WHERE Username = $uname OR Signature = $sign";
-		$result = mysqli_query($db_found, $SQL);
-		$num_rows = mysqli_num_rows($result);
+		$result = mysql_query($SQL);
+		$num_rows = mysql_num_rows($result);
 
 		if ($num_rows > 0) {
 			$errorMessage = "Username or Signature already taken";
@@ -128,9 +125,9 @@ if ($sLength >= 2 && $sLength <= 20) {
 
 			$SQL = "INSERT INTO users (Username, Usertype, Password, Signature) VALUES ($uname, $type, md5($pword), $sign)";
 
-			$result = mysqli_query($db_handle, $SQL) or die ("ERROR". mysqli_error($db_handle)."<br>". "$SQL");
+			$result = mysql_query($SQL) or die ("ERROR". mysql_error()."<br>". "$SQL");
 
-			mysqli_close($db_handle);
+			mysql_close($db_handle);
 
 		//=================================================================================
 		//	START THE SESSION AND PUT SOMETHING INTO THE SESSION VARIABLE CALLED login
@@ -168,7 +165,7 @@ if ($sLength >= 2 && $sLength <= 20) {
 	<body>
 <?php
 
-if ($_GET['save'] ) echo 'success';
+if ($_GET['save'] != "success")
 {
 ?>
 <FORM NAME ="form1" METHOD ="POST" ACTION ="index.php?mode=addUser">
