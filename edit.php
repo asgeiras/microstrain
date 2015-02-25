@@ -1,4 +1,4 @@
-   
+// comment   
 <SCRIPT TYPE="text/javascript">
 function number(e)
 {
