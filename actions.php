@@ -69,6 +69,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'search'){
 			$_SESSION['notterm4'] = $_POST['notterm4'];
 			$_SESSION['genotype'] = $_POST['check']['genotype'];
 			$_SESSION['comment'] = $_POST['check']['comment'];
+
+			// If all search boxes are empty, redirect to error
+			if(empty($_POST['term1']) && 
+				empty($_POST['term2']) && 
+				empty($_POST['term3']) && 
+				empty($_POST['term4']) && 
+				empty($_POST['notterm1']) && 
+				empty($_POST['notterm2']) && 
+				empty($_POST['notterm3']) && 
+				empty($_POST['notterm4']) && 
+				empty($_POST['sign1'])
+			) {
+				header("Location: index.php?mode=list&error=error");
+			}
 		}
 
 		// Search is number/list
