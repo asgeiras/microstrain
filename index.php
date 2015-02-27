@@ -3,14 +3,21 @@
 // Start the session
 session_start();
 
+// Logout
+if($_GET['logout'] == '1') {
+	$user = '';
+	session_destroy();
+	header('Location: index.php');
+}
+
 // Connect to the database or die
 include("db.php");
 
-// Troubleshooting
-print("session:<pre>".print_r($_SESSION, true)."</pre>");
-
 // Include all actions for forms
 include("actions.php");
+
+// Troubleshooting
+print("session:<pre>".print_r($_SESSION, true)."</pre>");
 
 ?>
 
@@ -86,71 +93,6 @@ include("actions.php");
 				//********************************************//
 				/*
 				echo $_SESSION['noJs'];
-
-				if($_POST['isPosted'] == 'TRUE') {
-					session_start();
-
-					$_SESSION['sign1'] = $_POST['sign1'];
-
-					if($_GET['type'] == 'word') {
-						$_SESSION['term1'] = $_POST['term1'];
-						$_SESSION['term2'] = $_POST['term2'];
-						$_SESSION['term3'] = $_POST['term3'];
-						$_SESSION['term4'] = $_POST['term4'];
-						$_SESSION['notterm1'] = $_POST['notterm1'];
-						$_SESSION['notterm2'] = $_POST['notterm2'];
-						$_SESSION['notterm3'] = $_POST['notterm3'];
-						$_SESSION['notterm4'] = $_POST['notterm4'];
-						$_SESSION['genotype'] = $_POST['check']['genotype'];
-						$_SESSION['comment'] = $_POST['check']['comment'];
-					}
-
-					if($_GET['type'] == 'number') { 
-						$_SESSION['minNum'] = $_POST['minNum'];
-						$_SESSION['maxNum'] = $_POST['maxNum'];
-					}
-				}
-
-				
-				if($_GET['logout'] == '1') {
-					$user = '';
-					session_start();
-					session_destroy();
-				}
-
-				// The reset button clears all submitted variables from all forms.
-				if($_GET['reset'] == 'TRUE') {
-					//Search:
-					$_SESSION['total_records'] = '';
-					$_SESSION['word'] = '';
-					$_SESSION['num'] = '';
-					$_SESSION['check'] = '';
-					$_SESSION['genotype'] = '';
-					$_SESSION['comment'] = '';
-					$_SESSION['term1'] = '';
-					$_SESSION['term1'] = '';
-					$_SESSION['term2'] = '';
-					$_SESSION['term3'] = '';
-					$_SESSION['term4'] = '';
-					$_SESSION['notterm1'] = '';
-					$_SESSION['notterm2'] = '';
-					$_SESSION['notterm3'] = '';
-					$_SESSION['notterm4'] = '';
-					$_SESSION['sign1'] = '';
-					$_SESSION['minNum'] = '';
-					$_SESSION['maxNum'] = '';
-
-					// Add strains:
-					$_SESSION["Line"] = '';
-					$_SESSION['saveFail'] = '';
-					for($i = 1; $i <= 50; $i++) {
-						$_SESSION["txtGenotype$i"] = '';
-						$_SESSION["txtDonor$i"] = '';
-						$_SESSION["txtRecipient$i"] = '';
-						$_SESSION["txtComment$i"] = '';
-					}
-				}
-
 
 				if ($_GET['error'] == 'error') {
 					echo "<span style='color: red'><strong>You need to provide at least one keyword!</strong></span><br>";

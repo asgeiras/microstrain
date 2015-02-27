@@ -50,4 +50,71 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'login'){
 	}
 }
 
+// DO SEARCH
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'search'){
+
+	// Search button has been pressed
+	if($_POST['button'] == 'search-text' || $_POST['button'] == 'search-list'){
+		$_SESSION['sign1'] = $_POST['sign1'];
+
+		// Search is text
+		if($_POST['button'] == 'search-text') {
+			$_SESSION['term1'] = $_POST['term1'];
+			$_SESSION['term2'] = $_POST['term2'];
+			$_SESSION['term3'] = $_POST['term3'];
+			$_SESSION['term4'] = $_POST['term4'];
+			$_SESSION['notterm1'] = $_POST['notterm1'];
+			$_SESSION['notterm2'] = $_POST['notterm2'];
+			$_SESSION['notterm3'] = $_POST['notterm3'];
+			$_SESSION['notterm4'] = $_POST['notterm4'];
+			$_SESSION['genotype'] = $_POST['check']['genotype'];
+			$_SESSION['comment'] = $_POST['check']['comment'];
+		}
+
+		// Search is number/list
+		if($_POST['button'] == 'search-list') { 
+			$_SESSION['minNum'] = $_POST['minNum'];
+			$_SESSION['maxNum'] = $_POST['maxNum'];
+		}
+	}
+
+	// The reset button clears all submitted variables from all forms
+	if($_POST['reset'] == 'Reset'){
+		if($_GET['reset'] == 'TRUE') {
+			//Search:
+			$_SESSION['total_records'] = '';
+			$_SESSION['word'] = '';
+			$_SESSION['num'] = '';
+			$_SESSION['check'] = '';
+			$_SESSION['genotype'] = '';
+			$_SESSION['comment'] = '';
+			$_SESSION['term1'] = '';
+			$_SESSION['term1'] = '';
+			$_SESSION['term2'] = '';
+			$_SESSION['term3'] = '';
+			$_SESSION['term4'] = '';
+			$_SESSION['notterm1'] = '';
+			$_SESSION['notterm2'] = '';
+			$_SESSION['notterm3'] = '';
+			$_SESSION['notterm4'] = '';
+			$_SESSION['sign1'] = '';
+			$_SESSION['minNum'] = '';
+			$_SESSION['maxNum'] = '';
+
+			/*
+			// Add strains:
+			$_SESSION["Line"] = '';
+			$_SESSION['saveFail'] = '';
+			for($i = 1; $i <= 50; $i++) {
+				$_SESSION["txtGenotype$i"] = '';
+				$_SESSION["txtDonor$i"] = '';
+				$_SESSION["txtRecipient$i"] = '';
+				$_SESSION["txtComment$i"] = '';
+			}
+			*/
+		}
+	}
+
+}
+
 ?>
