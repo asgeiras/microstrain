@@ -227,209 +227,208 @@ if ($_GET['mode'] == 'edit2') {
 }
 //End List inserted strains
 
-	// Do the actual mysql query
-	if($sql){
-		$result = mysql_query($sql,$con);
-		// Count the results and print a message: If no matches were found, back off.
-		$rs_result = mysql_query($sql2,$con);
-		$row = mysql_fetch_row($rs_result); 
-		$total_records = $row[0];
+// Do the actual mysql query
+if($sql){
+	$result = mysql_query($sql,$con);
+	// Count the results and print a message: If no matches were found, back off.
+	$rs_result = mysql_query($sql2,$con);
+	$row = mysql_fetch_row($rs_result); 
+	$total_records = $row[0];
 
-		$_SESSION['total_records'] = $total_records;
-		$showing_records = mysql_num_rows($result);
+	$_SESSION['total_records'] = $total_records;
+	$showing_records = mysql_num_rows($result);
 
-		if ($total_records == '1') {
-			$message_records = 'only one';
-			$plural = '';
-		} else {
-			$message_records = $total_records;
-			$plural = 's';
-		}
-
-		if ($total_records == '0') {
-			echo "<span style='color: red'>Sorry, no matches. Try again</span>";
-			mysql_close();
-		} else {
-			$helpmessage2 = "<br><span style='font-weight: bold; color: red;'>Tip:</span> To see the information about a donor or recipient, click the link in the corresponding cell. Use ctrl+click (cmd+click in Mac OS) to open in a new tab.";
-		    echo $message, "<span style='font-weight: bold'>", $total_records, "</span> strain", $plural, ". ";
-
-		//Multi page:
-		if ($total_records > $limit) {
-			echo "Showing <span style='font-weight: bold'> ", $showing_records, "</span> strains per page starting at no. <span style='font-weight: bold'>", ($startval+1), "</span>:<br>"; 
-
-			$pages = ceil($total_records / $limit);
-			$page = $_POST['page'];
-
-			echo "<br>Page <span style='font-weight: bold'>",$page, "</span> of <span style='font-weight: bold'>", $pages, "</span>. ";
-			
-			for($n = ; $n <= $pages; $n++) {
-				if ($n != $page){
-					echo ' <a href="javascript:pageforward(', "'", $n, "'", ');">', $n,'</a> ';
-				} else {
-					echo " <span style='font-weight: bold; color: blue;'>", $n, "</span> ";
-				} 
-			}
-		}
-
-		// Print out a table of the resulting strains
-		echo "<table class='sample' border='1'><br>";
-
-			echo "<tr>";
-				echo "<th>Strain</th>";
-				echo "<th width='300px'>Genotype</th>";
-				echo "<th>Recipient</th>";
-				echo "<th>Donor</th>";
-				echo "<th width='300px'>Comment</th>";
-				echo "<th>Signature</th>";
-				echo "<th>Created</th>";
-				echo "<th>Select<input type='hidden' name='toggle' value='set' />";
-					echo "<input type='button' name='CheckAll' value='All' onClick='checkAll(document.selectRow)'>";
-					echo "<input type='button' name='UnCheckAll' value='None' onClick='uncheckAll(document.selectRow)'>";
-				echo "</th>";
-			echo "</tr>";
-
-			echo "<form action='index.php?mode=myList' name='selectRow' method='post'><input type='submit' title='Show a table of only the selected strains' name='show' value='Show selected'/>";
-
-				if($_SESSION['Usertype'] == 'Superuser') {
-					echo "<input type='submit' title='Edit the selected strains' name='edit' value='Edit selected'/>";
-				}
-
-				echo "<input type='submit' title='Open the selected strains in a printer-friendly table' name='print' value='print selected'/>";
-
-				$csv_output .= "Strain;Genotype;Recipient;Donor;Comment;Signature;Created\n";
-				while ($row = mysql_fetch_array($result)){
-					$genotype = htmlspecialchars($row['Genotype']);
-					$genotype1 = htmlspecialchars($row['Genotype']);
-					$comment = htmlspecialchars($row['Comment']);
-					$comment1 = htmlspecialchars($row['Comment']);
-
-					// Display every match to the search word with colored text:
-					// Genotype:
-					if(($_SESSION['genotype'] == 'genotype')){
-
-						if($_SESSION['term1'] != '') {
-							$genotype = preg_replace('/'.preg_quote($_SESSION['term1'], '/').'/i', "¢$0¦", $genotype);
-						}
-
-						if($_SESSION['term2'] != '') {
-							$genotype = preg_replace('/'.preg_quote($_SESSION['term2'], '/').'/i', "¢$0¦", $genotype);
-						}
-
-						if($_SESSION['term3'] != '') {
-							$genotype = preg_replace('/'.preg_quote($_SESSION['term3'], '/').'/i', "¢$0¦", $genotype);
-						}
-
-						if($_SESSION['term4'] != '') {
-							$genotype = preg_replace('/'.preg_quote($_SESSION['term4'], '/').'/i', "¢$0¦", $genotype);
-						}
-
-						$genotype = preg_replace('/'.preg_quote('¢', '/').'/i', "<span style='color: blue; font-weight: bold;'>", $genotype);
-						$genotype = preg_replace('/'.preg_quote('¦', '/').'/i', "</span>", $genotype);
-					}
-
-					// Comment:
-					if(($_SESSION['comment'] == 'comment')){
-
-						if($_SESSION['term1'] != '') {
-							$comment = preg_replace('/'.preg_quote($_SESSION['term1'], '/').'/i', "¢$0¦", $comment);
-						}
-
-						if($_SESSION['term2'] != '') {
-							$comment = preg_replace('/'.preg_quote($_SESSION['term2'], '/').'/i', "¢$0¦", $comment);
-						}
-
-						if($_SESSION['term3'] != '') {
-							$comment = preg_replace('/'.preg_quote($_SESSION['term3'], '/').'/i', "¢$0¦", $comment);
-						}
-
-						if($_SESSION['term4'] != '') {
-							$comment = preg_replace('/'.preg_quote($_SESSION['term4'], '/').'/i', "¢$0¦", $comment);
-						}
-
-						$comment = preg_replace('/'.preg_quote('¢', '/').'/i', "<span style='color: blue; font-weight: bold;'>", $comment);
-						$comment = preg_replace('/'.preg_quote('¦', '/').'/i', "</span>", $comment);
-					}
-
-					echo "<tr>";
-						echo "<td>";    
-							echo 'DA' .$row['Strain'];
-							$csv_output .= "DA". $row['Strain'] . "; ";
-						echo "</td>";
-
-						echo "<td>"; 
-							echo $genotype;
-							$csv_output .= $genotype1 . "; ";
-						echo "</td>";
-
-						echo "<td align='right'>";
-							if ($row['Recipient'] == "0") {
-								echo "";
-								$csv_output .= "; ";
-							} else {
-								echo "<a href=index.php?mode=myNum&myNum=". $row['Recipient']. " title='View DA". $row['Recipient']. " in a new tab'>DA". $row['Recipient']. "</a>";
-								$csv_output .= "DA". $row['Recipient'] . "; ";
-							}
-						echo "</td>";
-
-						echo "<td align='right'>";
-							if ($row['Donor'] == "0") {
-								echo "";
-								$csv_output .= "; ";
-							} else {
-								echo "<a href=index.php?mode=myNum&myNum=". $row['Donor']. " title='View DA". $row['Donor']. " in a new tab'>DA". $row['Donor']. "</a>";
-								$csv_output .= "DA". $row['Donor'] . "; ";
-							}
-						echo "</td>";
-
-						echo "<td>"; 
-							echo $comment;
-							$csv_output .= $comment1 . "; ";
-						echo "</td>";
-
-						echo "<td>"; 
-							echo $row['Signature'];
-							$csv_output .= $row['Signature'] . "; ";
-						echo "</td>";
-
-						echo "<td>"; 
-							if ($row['Created'] == "0000-00-00 00:00:00"){
-								echo '';
-								$csv_output .= ";\n";
-							} else {
-								echo $row['Created'];
-								$csv_output .= $row['Created'] . "\n";
-							}
-						echo "</td>";
-						echo "<td><div align=center><input type=checkbox name='selected[]' value=". $row['Strain']. "></div></td>";
-					echo "</tr>";
-					//Stop making the table
-				}
-
-			echo "</form>";
-		echo "</table>";
-
-		// Close the mysql connection
-		mysql_close();
-		if ($total_records > $limit) {
-
-			echo "<br>Page <span style='font-weight: bold'>" . $page . "</span> of <span style='font-weight: bold'>" . $pages . "</span>.";
-
-			for($n = 1; $n <= $pages; $n++) {
-				if ($n != $page){
-					echo ' <a href="javascript:pageforward(', "'", $n, "'", ');">', $n,'</a> ';
-				} else {
-					echo " <span style='font-weight: bold; color: blue;'>", $n, "</span> ";
-				} 
-			}
-		}
-
-		echo '<form name="export" action="export.php" method="post">';
-			echo '<input type="submit" value="Export table to CSV">';
-			echo '<input type="hidden" value="' . $csv_hdr . '" name="csv_hdr">';
-			echo '<input type="hidden" value="' . $csv_output . '" name="csv_output">';
-		echo "</form>";
-
+	if ($total_records == '1') {
+		$message_records = 'only one';
+		$plural = '';
+	} else {
+		$message_records = $total_records;
+		$plural = 's';
 	}
+
+	if ($total_records == '0') {
+		echo "<span style='color: red'>Sorry, no matches. Try again</span>";
+		mysql_close();
+	} else {
+		$helpmessage2 = "<br><span style='font-weight: bold; color: red;'>Tip:</span> To see the information about a donor or recipient, click the link in the corresponding cell. Use ctrl+click (cmd+click in Mac OS) to open in a new tab.";
+	    echo $message, "<span style='font-weight: bold'>", $total_records, "</span> strain", $plural, ". ";
+
+	//Multi page:
+	if ($total_records > $limit) {
+		echo "Showing <span style='font-weight: bold'> ", $showing_records, "</span> strains per page starting at no. <span style='font-weight: bold'>", ($startval+1), "</span>:<br>"; 
+
+		$pages = ceil($total_records / $limit);
+		$page = $_POST['page'];
+
+		echo "<br>Page <span style='font-weight: bold'>",$page, "</span> of <span style='font-weight: bold'>", $pages, "</span>. ";
+		
+		for($n = ; $n <= $pages; $n++) {
+			if ($n != $page){
+				echo ' <a href="javascript:pageforward(', "'", $n, "'", ');">', $n,'</a> ';
+			} else {
+				echo " <span style='font-weight: bold; color: blue;'>", $n, "</span> ";
+			} 
+		}
+	}
+
+	// Print out a table of the resulting strains
+	echo "<table class='sample' border='1'><br>";
+
+		echo "<tr>";
+			echo "<th>Strain</th>";
+			echo "<th width='300px'>Genotype</th>";
+			echo "<th>Recipient</th>";
+			echo "<th>Donor</th>";
+			echo "<th width='300px'>Comment</th>";
+			echo "<th>Signature</th>";
+			echo "<th>Created</th>";
+			echo "<th>Select<input type='hidden' name='toggle' value='set' />";
+				echo "<input type='button' name='CheckAll' value='All' onClick='checkAll(document.selectRow)'>";
+				echo "<input type='button' name='UnCheckAll' value='None' onClick='uncheckAll(document.selectRow)'>";
+			echo "</th>";
+		echo "</tr>";
+
+		echo "<form action='index.php?mode=myList' name='selectRow' method='post'><input type='submit' title='Show a table of only the selected strains' name='show' value='Show selected'/>";
+
+			if($_SESSION['Usertype'] == 'Superuser') {
+				echo "<input type='submit' title='Edit the selected strains' name='edit' value='Edit selected'/>";
+			}
+
+			echo "<input type='submit' title='Open the selected strains in a printer-friendly table' name='print' value='print selected'/>";
+
+			$csv_output .= "Strain;Genotype;Recipient;Donor;Comment;Signature;Created\n";
+			while ($row = mysql_fetch_array($result)){
+				$genotype = htmlspecialchars($row['Genotype']);
+				$genotype1 = htmlspecialchars($row['Genotype']);
+				$comment = htmlspecialchars($row['Comment']);
+				$comment1 = htmlspecialchars($row['Comment']);
+
+				// Display every match to the search word with colored text:
+				// Genotype:
+				if(($_SESSION['genotype'] == 'genotype')){
+
+					if($_SESSION['term1'] != '') {
+						$genotype = preg_replace('/'.preg_quote($_SESSION['term1'], '/').'/i', "¢$0¦", $genotype);
+					}
+
+					if($_SESSION['term2'] != '') {
+						$genotype = preg_replace('/'.preg_quote($_SESSION['term2'], '/').'/i', "¢$0¦", $genotype);
+					}
+
+					if($_SESSION['term3'] != '') {
+						$genotype = preg_replace('/'.preg_quote($_SESSION['term3'], '/').'/i', "¢$0¦", $genotype);
+					}
+
+					if($_SESSION['term4'] != '') {
+						$genotype = preg_replace('/'.preg_quote($_SESSION['term4'], '/').'/i', "¢$0¦", $genotype);
+					}
+
+					$genotype = preg_replace('/'.preg_quote('¢', '/').'/i', "<span style='color: blue; font-weight: bold;'>", $genotype);
+					$genotype = preg_replace('/'.preg_quote('¦', '/').'/i', "</span>", $genotype);
+				}
+
+				// Comment:
+				if(($_SESSION['comment'] == 'comment')){
+
+					if($_SESSION['term1'] != '') {
+						$comment = preg_replace('/'.preg_quote($_SESSION['term1'], '/').'/i', "¢$0¦", $comment);
+					}
+
+					if($_SESSION['term2'] != '') {
+						$comment = preg_replace('/'.preg_quote($_SESSION['term2'], '/').'/i', "¢$0¦", $comment);
+					}
+
+					if($_SESSION['term3'] != '') {
+						$comment = preg_replace('/'.preg_quote($_SESSION['term3'], '/').'/i', "¢$0¦", $comment);
+					}
+
+					if($_SESSION['term4'] != '') {
+						$comment = preg_replace('/'.preg_quote($_SESSION['term4'], '/').'/i', "¢$0¦", $comment);
+					}
+
+					$comment = preg_replace('/'.preg_quote('¢', '/').'/i', "<span style='color: blue; font-weight: bold;'>", $comment);
+					$comment = preg_replace('/'.preg_quote('¦', '/').'/i', "</span>", $comment);
+				}
+
+				echo "<tr>";
+					echo "<td>";    
+						echo 'DA' .$row['Strain'];
+						$csv_output .= "DA". $row['Strain'] . "; ";
+					echo "</td>";
+
+					echo "<td>"; 
+						echo $genotype;
+						$csv_output .= $genotype1 . "; ";
+					echo "</td>";
+
+					echo "<td align='right'>";
+						if ($row['Recipient'] == "0") {
+							echo "";
+							$csv_output .= "; ";
+						} else {
+							echo "<a href=index.php?mode=myNum&myNum=". $row['Recipient']. " title='View DA". $row['Recipient']. " in a new tab'>DA". $row['Recipient']. "</a>";
+							$csv_output .= "DA". $row['Recipient'] . "; ";
+						}
+					echo "</td>";
+
+					echo "<td align='right'>";
+						if ($row['Donor'] == "0") {
+							echo "";
+							$csv_output .= "; ";
+						} else {
+							echo "<a href=index.php?mode=myNum&myNum=". $row['Donor']. " title='View DA". $row['Donor']. " in a new tab'>DA". $row['Donor']. "</a>";
+							$csv_output .= "DA". $row['Donor'] . "; ";
+						}
+					echo "</td>";
+
+					echo "<td>"; 
+						echo $comment;
+						$csv_output .= $comment1 . "; ";
+					echo "</td>";
+
+					echo "<td>"; 
+						echo $row['Signature'];
+						$csv_output .= $row['Signature'] . "; ";
+					echo "</td>";
+
+					echo "<td>"; 
+						if ($row['Created'] == "0000-00-00 00:00:00"){
+							echo '';
+							$csv_output .= ";\n";
+						} else {
+							echo $row['Created'];
+							$csv_output .= $row['Created'] . "\n";
+						}
+					echo "</td>";
+					echo "<td><div align=center><input type=checkbox name='selected[]' value=". $row['Strain']. "></div></td>";
+				echo "</tr>";
+				//Stop making the table
+			}
+
+		echo "</form>";
+	echo "</table>";
+
+	// Close the mysql connection
+	mysql_close();
+	if ($total_records > $limit) {
+
+		echo "<br>Page <span style='font-weight: bold'>" . $page . "</span> of <span style='font-weight: bold'>" . $pages . "</span>.";
+
+		for($n = 1; $n <= $pages; $n++) {
+			if ($n != $page){
+				echo ' <a href="javascript:pageforward(', "'", $n, "'", ');">', $n,'</a> ';
+			} else {
+				echo " <span style='font-weight: bold; color: blue;'>", $n, "</span> ";
+			} 
+		}
+	}
+
+	echo '<form name="export" action="export.php" method="post">';
+		echo '<input type="submit" value="Export table to CSV">';
+		echo '<input type="hidden" value="' . $csv_hdr . '" name="csv_hdr">';
+		echo '<input type="hidden" value="' . $csv_output . '" name="csv_output">';
+	echo "</form>";
+
 } else {
 	echo "<span style='color: red'><strong>You need to provide at least one keyword!</strong></span><br>";
 }
