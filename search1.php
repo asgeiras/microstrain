@@ -26,21 +26,20 @@ if($_GET['type'] == 'word') {
 		header("Location: index.php?mode=list&error=error");
 	}*/
 
+	// If all but signature fields are empty
 	if(empty($_POST['term1']) && empty($_POST['term2']) && empty($_POST['term3']) && empty($_POST['term4']) && empty($_POST['notterm1']) && empty($_POST['notterm2']) && empty($_POST['notterm3']) && empty($_POST['notterm4']) && ($_POST['sign1'])) {
-		$sql = "select * from strains where Signature like '%$sign1%' ORDER BY Strain ASC LIMIT $startval, $limit";
-		$sql2 = "select COUNT(Strain) from strains where Signature like '%$sign1%'";
+		
+		// Build SQL statements, one limited and one that counts unlimited
+		$sql = "SELECT * FROM strains WHERE Signature LIKE '%:sign1%' ORDER BY Strain ASC LIMIT :startval, :limitval";
+		$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Signature LIKE ':$sign1%'";
+
+		//TODO
+		//Replaced 3/3 by Per Enström
+		//$sql = "select * from strains where Signature like '%$sign1%' ORDER BY Strain ASC LIMIT $startval, $limit";
+
 		$message = "Your search for the above keyword in <strong>Signature</strong> resulted in ";
 	} else {
 		$searchfield = $_POST['check'];
-		$term1 = mysql_real_escape_string($_SESSION['term1']);
-		$term2 = mysql_real_escape_string($_SESSION['term2']);
-		$term3 = mysql_real_escape_string($_SESSION['term3']);
-		$term4 = mysql_real_escape_string($_SESSION['term4']);
-
-		$notterm1 = mysql_real_escape_string($_SESSION['notterm1']); 
-		$notterm2 = mysql_real_escape_string($_SESSION['notterm2']);
-		$notterm3 = mysql_real_escape_string($_SESSION['notterm3']);
-		$notterm4 = mysql_real_escape_string($_SESSION['notterm4']);
 
 		//If not all search boxes are filled, reassign the variables (necessary for highlighting matching keywords in the table)
 		if($term3 == '') {
@@ -86,62 +85,62 @@ if($_GET['type'] == 'word') {
 
 		// Add the additional search parameters to the mysql query if more than one field is used:
 		if($term1 == '') {
-			header("Location: index.php?mode=list&error=error");
-		}
-
-		if($term1 != '') {
+			//TODO
+			print("No keyword entered");
+			die();
+			//header("Location: index.php?mode=list&error=error");
+		} else {
 
 			if($term2 == '') {
 				$incl2 = '';
 			} else {
-				$incl2 = "and ($field1 like '%$term2%' or $field2 like '%$term2%')";
+				$incl2 = "AND (:field1 LIKE '%:term2%' OR :field2 LIKE '%:term2%')";
 			}
 
 			if($term3 == '') {
 				$incl3 = '';
 			} else {
-				$incl3 = "and ($field1 like '%$term3%' or $field2 like '%$term3%')";
+				$incl3 = "AND (:field1 LIKE '%:term3%' OR :field2 LIKE '%:term3%')";
 			}
 
 			if($term4 == '') {
 				$incl4 = '';
 			} else {
-				$incl4 = "and ($field1 like '%$term4%' or $field2 like '%$term4%')";
+				$incl4 = "AND (:field1 LIKE '%:term4%' OR :field2 LIKE '%:term4%')";
 			}
 
 			if($notterm1 == '') {
 				$excl1 = '';
 			} else {
-				$excl1 = "and ($field1 not like '%$notterm1%' and $field2 not like '%$notterm1%')";
+				$excl1 = "AND (:field1 NOT LIKE '%:notterm1%' AND :field2 NOT LIKE '%:notterm1%')";
 			}
 
 			if($notterm2 == '') {
 				$excl2 = '';
 			} else {
-				$excl2 = "and ($field1 not like '%$notterm2%' and $field2 not like '%$notterm2%')";
+				$excl2 = "AND (:field1 NOT LIKE '%:notterm2%' AND :field2 NOT LIKE '%:notterm2%')";
 			}
 
 			if($notterm3 == ''){
 				$excl3 = '';
 			} else {
-				$excl3 = "and ($field1 not like '%$notterm3%' and $field2 not like '%$notterm3%')";
+				$excl3 = "AND (:field1 NOT LIKE '%:notterm3%' AND :field2 NOT LIKE '%:notterm3%')";
 			}
 
 			if($notterm4 == ''){
 				$excl4 = '';
 			} else {
-				$excl4 = "and ($field1 not like '%$notterm4%' and $field2 not like '%$notterm4%')";
+				$excl4 = "AND (:field1 NOT LIKE '%:notterm4%' AND :field2 NOT LIKE '%:notterm4%')";
 			}
 
 			if($sign1 == ''){
 				$sign = '';
 			} else {
-				$sign = " and Signature like '%$sign1%'";
+				$sign = " AND Signature LIKE '%:sign1%'";
 			}
 
-			$sql = "select * from strains where ($field1 like '%$term1%' or $field2 like '%$term1%') $incl2 $incl3 $incl4 $excl1 $excl2 $excl3 $excl4 $sign ORDER BY Strain ASC LIMIT $startval, $limit";
-
-			$sql2 = "select COUNT(Strain) from strains where ($field1 like '%$term1%' or $field2 like '%$term1%') $incl2 $incl3 $incl4 $excl1 $excl2 $excl3 $excl4 $sign";
+			$sql = "SELECT * FROM strains WHERE (:field1 LIKE '%:term1%' OR :field2 LIKE '%:term1%') $incl2 $incl3 $incl4 $excl1 $excl2 $excl3 $excl4 $sign ORDER BY Strain ASC LIMIT :startval, :limitval";
+			$sql2 = "SELECT COUNT(Strain) FROM strains WHERE (:field1 LIKE '%:term1%' OR :field2 LIKE '%:term1%') $incl2 $incl3 $incl4 $excl1 $excl2 $excl3 $excl4 $sign";
 		}
 	}
 }
@@ -158,29 +157,34 @@ if($_GET['type'] == 'number') {
 	//If all search boxes are empty, we do nothing, otherwise we do the search:
 	if(!(empty($_POST['minNum']) && empty($_POST['maxNum']) && empty($_POST['sign1']))) {
 
+		// If only signature box is filled
 		if(empty($_POST['minNum']) && empty($_POST['maxNum']) && ($_POST['sign1'])) {
-			$sql = "select * from strains where Signature like '%$sign1%' ORDER BY Strain ASC LIMIT $startval, $limit";
-			$sql2 = "select COUNT(Strain) from strains where Signature like '%$sign1%'";
+			$sql = "SELECT * FROM strains WHERE Signature LIKE '%:sign1%' ORDER BY Strain ASC LIMIT :startval, :limitval";
+			$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Signature LIKE ':$sign1%'";
 			$message = "Your search for the above keyword in <strong>Signature</strong> resulted in ";
 		} else {
-			if ($_POST['minNum'] != '' && $_POST['maxNum'] !='' && $_POST['minNum'] > $_POST['maxNum']) {
-				$sql = "select * from strains where Strain >= '$maxNum' and Strain <= '$minNum' and Signature like '%$sign1%' ORDER BY Strain ASC LIMIT $startval, $limit";
-				$sql2 = "select COUNT(Strain) from strains where Strain >= '$maxNum' and Strain <= '$minNum' and Signature like '%$sign1%'";
+			// If both min and max are filled, and min is larger than max: invert the search
+			if ($_POST['minNum'] != '' && $_POST['maxNum'] != '' && $_POST['minNum'] > $_POST['maxNum']) {
+				$sql = "SELECT * FROM strains WHERE Strain >= ':maxNum' AND Strain <= ':minNum' AND Signature LIKE '%:sign1%' ORDER BY Strain ASC LIMIT :startval, :limitval";
+				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain >= ':maxNum' AND Strain <= ':minNum' AND Signature LIKE '%:sign1%'";
 			}
 
-			if ($_POST['minNum'] != '' && $_POST['maxNum'] !='' && $_POST['minNum'] <= $_POST['maxNum']){
-				$sql = "select * from strains where Strain >= '$minNum' and Strain <= '$maxNum' and Signature like '%$sign1%' ORDER BY Strain ASC LIMIT $startval, $limit";
-				$sql2 = "select COUNT(Strain) from strains where Strain >= '$minNum' and Strain <= '$maxNum' and Signature like '%$sign1%'";
+			// If both min and max are filled, and max is -- as intended -- larger than min: search normally
+			if ($_POST['minNum'] != '' && $_POST['maxNum'] != '' && $_POST['minNum'] <= $_POST['maxNum']){
+				$sql = "SELECT * FROM strains WHERE Strain >= ':minNum' AND Strain <= ':maxNum' AND Signature LIKE '%:sign1%' ORDER BY Strain ASC LIMIT :startval, :limitval";
+				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain >= ':minNum' AND Strain <= ':maxNum' AND Signature LIKE '%:sign1%'";
 			}
 
+			// If max is empty while min is filled: only find the entered strain
 			if ($_POST['minNum'] != '' && $_POST['maxNum'] == '') {
-				$sql = "select * from strains where Strain = '$minNum' and Signature like '%$sign1%' ORDER BY Strain ASC LIMIT $startval, $limit";
-				$sql2 = "select COUNT(Strain) from strains where Strain = '$minNum' and Signature like '%$sign1%'";
+				$sql = "SELECT * FROM strains WHERE Strain = ':minNum' AND Signature LIKE '%:sign1%' ORDER BY Strain ASC LIMIT :startval, :limitval";
+				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain = ':minNum' AND Signature LIKE '%:sign1%'";
 			}
 			
+			// If min is empty while max is filled: only find the entered strain
 			if ($_POST['minNum'] == '' && $_POST['maxNum'] != '') {
-				$sql = "select * from strains where Strain = '$maxNum' and Signature like '%$sign1%' ORDER BY Strain ASC LIMIT $startval, $limit";
-				$sql2 = "select COUNT(Strain) from strains where Strain = '$maxNum' and Signature like '%$sign1%'";
+				$sql = "SELECT * FROM strains WHERE Strain = ':maxNum' AND Signature LIKE '%:sign1%' ORDER BY Strain ASC LIMIT :startval, :limitval";
+				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain = ':maxNum' AND Signature LIKE '%:sign1%'";
 			}
 		}
 	}
@@ -190,8 +194,7 @@ if($_GET['type'] == 'number') {
 //Show Donor/ recipient from clickable link in table:
 if ($_GET['mode'] == 'myNum') {
 	$myNum = $_GET['myNum'];
-	$sql = "select * from strains where Strain = '$myNum'";
-	$sql2 = "select COUNT(Strain) from strains where Strain = '$myNum'";
+	$sql = "SELECT * FROM strains WHERE Strain = ':myNum'";
 }
 //End Show Donor/ recipient from clickable link in table
 
@@ -204,7 +207,7 @@ if ($_GET['mode'] == 'myList') {
 	if($list == '') {
 		echo "You did not select any strain<br>";
 	} else {
-		$sql = "select * from strains where Strain IN ($list)";
+		$sql = "SELECT * FROM strains WHERE Strain IN (:list)";
 	}
 }
 //End List selected strains
@@ -214,7 +217,7 @@ if ($_GET['mode'] == 'add3') {
 	$inserted = $_POST['inserted'];
 	$list = implode(", ",$inserted);
 	$message = "You successfully saved the following "; 
-	$sql = "select * from strains where Strain IN ($list)";
+	$sql = "SELECT * FROM strains WHERE Strain IN (:list)";
 }
 //End List inserted strains
 
@@ -223,21 +226,79 @@ if ($_GET['mode'] == 'edit2') {
 	$edited = $_POST['selected'];
 	$list = implode(", ",$edited);
 	$message = "Please check the following ";
-	$sql = "select * from strains where Strain IN ($list)";
+	$sql = "SELECT * FROM strains WHERE Strain IN (:list)";
 }
 //End List inserted strains
 
 // Do the actual mysql query
 if($sql){
-	$result = mysql_query($sql,$con);
-	// Count the results and print a message: If no matches were found, back off.
-	$rs_result = mysql_query($sql2,$con);
-	$row = mysql_fetch_row($rs_result); 
-	$total_records = $row[0];
+
+	// Prepare PDO statements
+	$stmt = $dbh->prepare($sql);
+	$stmtTotal = $dbh->prepare($sql2);
+
+	// Bind parameters
+	// Limited rows
+	$stmt->bindParam(":sign1", $sign1);
+
+	$stmt->bindParam(":startval", $startval);
+	$stmt->bindParam(":limitval", $limitval);
+
+	$stmt->bindParam(":field1", $field1);
+	$stmt->bindParam(":field2", $field2);
+
+	$stmt->bindParam(":term1", $term1);
+	$stmt->bindParam(":term2", $term2);
+	$stmt->bindParam(":term3", $term3);
+	$stmt->bindParam(":term4", $term4);
+
+	$stmt->bindParam(":notterm1", $notterm1);
+	$stmt->bindParam(":notterm2", $notterm2);
+	$stmt->bindParam(":notterm3", $notterm3);
+	$stmt->bindParam(":notterm4", $notterm4);
+
+	$stmt->bindParam(":minNum", $minNum);
+	$stmt->bindParam(":maxNum", $maxNum);
+
+	$stmt->bindParam(":myNum", $myNum);
+
+	$stmt->bindParam(":list", $list);
+
+	// Total rows
+	$stmtTotal->bindParam(":sign1", $sign1);
+
+	$stmtTotal->bindParam(":field1", $field1);
+	$stmtTotal->bindParam(":field2", $field2);
+
+	$stmtTotal->bindParam(":term1", $term1);
+	$stmtTotal->bindParam(":term2", $term2);
+	$stmtTotal->bindParam(":term3", $term3);
+	$stmtTotal->bindParam(":term4", $term4);
+
+	$stmtTotal->bindParam(":notterm1", $notterm1);
+	$stmtTotal->bindParam(":notterm2", $notterm2);
+	$stmtTotal->bindParam(":notterm3", $notterm3);
+	$stmtTotal->bindParam(":notterm4", $notterm4);
+
+	$stmtTotal->bindParam(":minNum", $minNum);
+	$stmtTotal->bindParam(":maxNum", $maxNum);
+
+	$stmtTotal->bindParam(":myNum", $myNum);
+
+	$stmtTotal->bindParam(":list", $list);
+
+	// Execute statements
+	$stmt->execute();
+	$stmtTotal->execute();
+
+	// Fetch results
+	$result = $stmt->fetchAll();
+	$showing_records = count($result);
+	$total_records = $stmtTotal->fetchColumn();
 
 	$_SESSION['total_records'] = $total_records;
-	$showing_records = mysql_num_rows($result);
 
+	// Set result text and plural ending
 	if ($total_records == '1') {
 		$message_records = 'only one';
 		$plural = '';
@@ -246,188 +307,193 @@ if($sql){
 		$plural = 's';
 	}
 
+	// Print result text
 	if ($total_records == '0') {
 		echo "<span style='color: red'>Sorry, no matches. Try again</span>";
-		mysql_close();
 	} else {
 		$helpmessage2 = "<br><span style='font-weight: bold; color: red;'>Tip:</span> To see the information about a donor or recipient, click the link in the corresponding cell. Use ctrl+click (cmd+click in Mac OS) to open in a new tab.";
-	    echo $message, "<span style='font-weight: bold'>", $total_records, "</span> strain", $plural, ". ";
+	    echo $message . "<span style='font-weight: bold'>" . $total_records . "</span> strain" . $plural . ". ";
 
-	//Multi page:
-	if ($total_records > $limit) {
-		echo "Showing <span style='font-weight: bold'> ", $showing_records, "</span> strains per page starting at no. <span style='font-weight: bold'>", ($startval+1), "</span>:<br>"; 
+		//Multi page:
+		if ($total_records > $limit) {
+			echo "Showing <span style='font-weight: bold'> " . $showing_records . "</span> strains per page starting at no. <span style='font-weight: bold'>" . ($startval+1) . "</span>:<br>"; 
 
-		$pages = ceil($total_records / $limit);
-		$page = $_POST['page'];
+			$pages = ceil($total_records / $limit);
+			$page = $_POST['page'];
 
-		echo "<br>Page <span style='font-weight: bold'>",$page, "</span> of <span style='font-weight: bold'>", $pages, "</span>. ";
-		
-		for($n = ; $n <= $pages; $n++) {
-			if ($n != $page){
-				echo ' <a href="javascript:pageforward(', "'", $n, "'", ');">', $n,'</a> ';
-			} else {
-				echo " <span style='font-weight: bold; color: blue;'>", $n, "</span> ";
-			} 
+			echo "<br>Page <span style='font-weight: bold'>" . $page . "</span> of <span style='font-weight: bold'>" . $pages . "</span>. ";
+			
+			// Print pagination links
+			for($n = 1; $n <= $pages; $n++) {
+				if ($n != $page){
+					echo ' <a href="javascript:pageforward(\'' . $n . '\');">' . $n . '</a> ';
+				} else {
+					echo " <span style='font-weight: bold; color: blue;'>" . $n . "</span> ";
+				} 
+			}
 		}
-	}
 
-	// Print out a table of the resulting strains
-	echo "<table class='sample' border='1'><br>";
+		// Print out a table of the resulting strains
+		echo "<table class='sample'>";
 
-		echo "<tr>";
-			echo "<th>Strain</th>";
-			echo "<th width='300px'>Genotype</th>";
-			echo "<th>Recipient</th>";
-			echo "<th>Donor</th>";
-			echo "<th width='300px'>Comment</th>";
-			echo "<th>Signature</th>";
-			echo "<th>Created</th>";
-			echo "<th>Select<input type='hidden' name='toggle' value='set' />";
-				echo "<input type='button' name='CheckAll' value='All' onClick='checkAll(document.selectRow)'>";
-				echo "<input type='button' name='UnCheckAll' value='None' onClick='uncheckAll(document.selectRow)'>";
-			echo "</th>";
-		echo "</tr>";
+			echo "<tr>";
+				echo "<th>Strain</th>";
+				echo "<th style='width: 300px'>Genotype</th>";
+				echo "<th>Recipient</th>";
+				echo "<th>Donor</th>";
+				echo "<th style='width: 300px'>Comment</th>";
+				echo "<th>Signature</th>";
+				echo "<th>Created</th>";
+				echo "<th>";
+					echo "Select";
+					echo "<input type='hidden' name='toggle' value='set' />";
+					echo "<input type='button' name='CheckAll' value='All' onClick='checkAll(document.selectRow)'>";
+					echo "<input type='button' name='UnCheckAll' value='None' onClick='uncheckAll(document.selectRow)'>";
+				echo "</th>";
+			echo "</tr>";
+			// WORK DONE TO HERE
+			echo "<form action='index.php?mode=myList' name='selectRow' method='post'>";
+				echo "<input type='submit' title='Show a table of only the selected strains' name='show' value='Show selected'/>";
 
-		echo "<form action='index.php?mode=myList' name='selectRow' method='post'><input type='submit' title='Show a table of only the selected strains' name='show' value='Show selected'/>";
-
-			if($_SESSION['Usertype'] == 'Superuser') {
-				echo "<input type='submit' title='Edit the selected strains' name='edit' value='Edit selected'/>";
-			}
-
-			echo "<input type='submit' title='Open the selected strains in a printer-friendly table' name='print' value='print selected'/>";
-
-			$csv_output .= "Strain;Genotype;Recipient;Donor;Comment;Signature;Created\n";
-			while ($row = mysql_fetch_array($result)){
-				$genotype = htmlspecialchars($row['Genotype']);
-				$genotype1 = htmlspecialchars($row['Genotype']);
-				$comment = htmlspecialchars($row['Comment']);
-				$comment1 = htmlspecialchars($row['Comment']);
-
-				// Display every match to the search word with colored text:
-				// Genotype:
-				if(($_SESSION['genotype'] == 'genotype')){
-
-					if($_SESSION['term1'] != '') {
-						$genotype = preg_replace('/'.preg_quote($_SESSION['term1'], '/').'/i', "¢$0¦", $genotype);
-					}
-
-					if($_SESSION['term2'] != '') {
-						$genotype = preg_replace('/'.preg_quote($_SESSION['term2'], '/').'/i', "¢$0¦", $genotype);
-					}
-
-					if($_SESSION['term3'] != '') {
-						$genotype = preg_replace('/'.preg_quote($_SESSION['term3'], '/').'/i', "¢$0¦", $genotype);
-					}
-
-					if($_SESSION['term4'] != '') {
-						$genotype = preg_replace('/'.preg_quote($_SESSION['term4'], '/').'/i', "¢$0¦", $genotype);
-					}
-
-					$genotype = preg_replace('/'.preg_quote('¢', '/').'/i', "<span style='color: blue; font-weight: bold;'>", $genotype);
-					$genotype = preg_replace('/'.preg_quote('¦', '/').'/i', "</span>", $genotype);
+				if($_SESSION['Usertype'] == 'Superuser') {
+					echo "<input type='submit' title='Edit the selected strains' name='edit' value='Edit selected'/>";
 				}
 
-				// Comment:
-				if(($_SESSION['comment'] == 'comment')){
+				echo "<input type='submit' title='Open the selected strains in a printer-friendly table' name='print' value='print selected'/>";
 
-					if($_SESSION['term1'] != '') {
-						$comment = preg_replace('/'.preg_quote($_SESSION['term1'], '/').'/i', "¢$0¦", $comment);
+				$csv_output .= "Strain;Genotype;Recipient;Donor;Comment;Signature;Created\n";
+				while ($row = mysql_fetch_array($result)){
+					$genotype = htmlspecialchars($row['Genotype']);
+					$genotype1 = htmlspecialchars($row['Genotype']);
+					$comment = htmlspecialchars($row['Comment']);
+					$comment1 = htmlspecialchars($row['Comment']);
+
+					// Display every match to the search word with colored text:
+					// Genotype:
+					if(($_SESSION['genotype'] == 'genotype')){
+
+						if($_SESSION['term1'] != '') {
+							$genotype = preg_replace('/'.preg_quote($_SESSION['term1'], '/').'/i', "¢$0¦", $genotype);
+						}
+
+						if($_SESSION['term2'] != '') {
+							$genotype = preg_replace('/'.preg_quote($_SESSION['term2'], '/').'/i', "¢$0¦", $genotype);
+						}
+
+						if($_SESSION['term3'] != '') {
+							$genotype = preg_replace('/'.preg_quote($_SESSION['term3'], '/').'/i', "¢$0¦", $genotype);
+						}
+
+						if($_SESSION['term4'] != '') {
+							$genotype = preg_replace('/'.preg_quote($_SESSION['term4'], '/').'/i', "¢$0¦", $genotype);
+						}
+
+						$genotype = preg_replace('/'.preg_quote('¢', '/').'/i', "<span style='color: blue; font-weight: bold;'>", $genotype);
+						$genotype = preg_replace('/'.preg_quote('¦', '/').'/i', "</span>", $genotype);
 					}
 
-					if($_SESSION['term2'] != '') {
-						$comment = preg_replace('/'.preg_quote($_SESSION['term2'], '/').'/i', "¢$0¦", $comment);
+					// Comment:
+					if(($_SESSION['comment'] == 'comment')){
+
+						if($_SESSION['term1'] != '') {
+							$comment = preg_replace('/'.preg_quote($_SESSION['term1'], '/').'/i', "¢$0¦", $comment);
+						}
+
+						if($_SESSION['term2'] != '') {
+							$comment = preg_replace('/'.preg_quote($_SESSION['term2'], '/').'/i', "¢$0¦", $comment);
+						}
+
+						if($_SESSION['term3'] != '') {
+							$comment = preg_replace('/'.preg_quote($_SESSION['term3'], '/').'/i', "¢$0¦", $comment);
+						}
+
+						if($_SESSION['term4'] != '') {
+							$comment = preg_replace('/'.preg_quote($_SESSION['term4'], '/').'/i', "¢$0¦", $comment);
+						}
+
+						$comment = preg_replace('/'.preg_quote('¢', '/').'/i', "<span style='color: blue; font-weight: bold;'>", $comment);
+						$comment = preg_replace('/'.preg_quote('¦', '/').'/i', "</span>", $comment);
 					}
 
-					if($_SESSION['term3'] != '') {
-						$comment = preg_replace('/'.preg_quote($_SESSION['term3'], '/').'/i', "¢$0¦", $comment);
-					}
+					echo "<tr>";
+						echo "<td>";    
+							echo 'DA' .$row['Strain'];
+							$csv_output .= "DA". $row['Strain'] . "; ";
+						echo "</td>";
 
-					if($_SESSION['term4'] != '') {
-						$comment = preg_replace('/'.preg_quote($_SESSION['term4'], '/').'/i', "¢$0¦", $comment);
-					}
+						echo "<td>"; 
+							echo $genotype;
+							$csv_output .= $genotype1 . "; ";
+						echo "</td>";
 
-					$comment = preg_replace('/'.preg_quote('¢', '/').'/i', "<span style='color: blue; font-weight: bold;'>", $comment);
-					$comment = preg_replace('/'.preg_quote('¦', '/').'/i', "</span>", $comment);
+						echo "<td align='right'>";
+							if ($row['Recipient'] == "0") {
+								echo "";
+								$csv_output .= "; ";
+							} else {
+								echo "<a href=index.php?mode=myNum&myNum=". $row['Recipient']. " title='View DA". $row['Recipient']. " in a new tab'>DA". $row['Recipient']. "</a>";
+								$csv_output .= "DA". $row['Recipient'] . "; ";
+							}
+						echo "</td>";
+
+						echo "<td align='right'>";
+							if ($row['Donor'] == "0") {
+								echo "";
+								$csv_output .= "; ";
+							} else {
+								echo "<a href=index.php?mode=myNum&myNum=". $row['Donor']. " title='View DA". $row['Donor']. " in a new tab'>DA". $row['Donor']. "</a>";
+								$csv_output .= "DA". $row['Donor'] . "; ";
+							}
+						echo "</td>";
+
+						echo "<td>"; 
+							echo $comment;
+							$csv_output .= $comment1 . "; ";
+						echo "</td>";
+
+						echo "<td>"; 
+							echo $row['Signature'];
+							$csv_output .= $row['Signature'] . "; ";
+						echo "</td>";
+
+						echo "<td>"; 
+							if ($row['Created'] == "0000-00-00 00:00:00"){
+								echo '';
+								$csv_output .= ";\n";
+							} else {
+								echo $row['Created'];
+								$csv_output .= $row['Created'] . "\n";
+							}
+						echo "</td>";
+						echo "<td><div align=center><input type=checkbox name='selected[]' value=". $row['Strain']. "></div></td>";
+					echo "</tr>";
+					//Stop making the table
 				}
 
-				echo "<tr>";
-					echo "<td>";    
-						echo 'DA' .$row['Strain'];
-						$csv_output .= "DA". $row['Strain'] . "; ";
-					echo "</td>";
+			echo "</form>";
+		echo "</table>";
 
-					echo "<td>"; 
-						echo $genotype;
-						$csv_output .= $genotype1 . "; ";
-					echo "</td>";
+		// Close the mysql connection
+		mysql_close();
+		if ($total_records > $limit) {
 
-					echo "<td align='right'>";
-						if ($row['Recipient'] == "0") {
-							echo "";
-							$csv_output .= "; ";
-						} else {
-							echo "<a href=index.php?mode=myNum&myNum=". $row['Recipient']. " title='View DA". $row['Recipient']. " in a new tab'>DA". $row['Recipient']. "</a>";
-							$csv_output .= "DA". $row['Recipient'] . "; ";
-						}
-					echo "</td>";
+			echo "<br>Page <span style='font-weight: bold'>" . $page . "</span> of <span style='font-weight: bold'>" . $pages . "</span>.";
 
-					echo "<td align='right'>";
-						if ($row['Donor'] == "0") {
-							echo "";
-							$csv_output .= "; ";
-						} else {
-							echo "<a href=index.php?mode=myNum&myNum=". $row['Donor']. " title='View DA". $row['Donor']. " in a new tab'>DA". $row['Donor']. "</a>";
-							$csv_output .= "DA". $row['Donor'] . "; ";
-						}
-					echo "</td>";
-
-					echo "<td>"; 
-						echo $comment;
-						$csv_output .= $comment1 . "; ";
-					echo "</td>";
-
-					echo "<td>"; 
-						echo $row['Signature'];
-						$csv_output .= $row['Signature'] . "; ";
-					echo "</td>";
-
-					echo "<td>"; 
-						if ($row['Created'] == "0000-00-00 00:00:00"){
-							echo '';
-							$csv_output .= ";\n";
-						} else {
-							echo $row['Created'];
-							$csv_output .= $row['Created'] . "\n";
-						}
-					echo "</td>";
-					echo "<td><div align=center><input type=checkbox name='selected[]' value=". $row['Strain']. "></div></td>";
-				echo "</tr>";
-				//Stop making the table
+			for($n = 1; $n <= $pages; $n++) {
+				if ($n != $page){
+					echo ' <a href="javascript:pageforward(', "'", $n, "'", ');">', $n,'</a> ';
+				} else {
+					echo " <span style='font-weight: bold; color: blue;'>", $n, "</span> ";
+				} 
 			}
+		}
 
+		echo '<form name="export" action="export.php" method="post">';
+			echo '<input type="submit" value="Export table to CSV">';
+			echo '<input type="hidden" value="' . $csv_hdr . '" name="csv_hdr">';
+			echo '<input type="hidden" value="' . $csv_output . '" name="csv_output">';
 		echo "</form>";
-	echo "</table>";
-
-	// Close the mysql connection
-	mysql_close();
-	if ($total_records > $limit) {
-
-		echo "<br>Page <span style='font-weight: bold'>" . $page . "</span> of <span style='font-weight: bold'>" . $pages . "</span>.";
-
-		for($n = 1; $n <= $pages; $n++) {
-			if ($n != $page){
-				echo ' <a href="javascript:pageforward(', "'", $n, "'", ');">', $n,'</a> ';
-			} else {
-				echo " <span style='font-weight: bold; color: blue;'>", $n, "</span> ";
-			} 
-		}
 	}
-
-	echo '<form name="export" action="export.php" method="post">';
-		echo '<input type="submit" value="Export table to CSV">';
-		echo '<input type="hidden" value="' . $csv_hdr . '" name="csv_hdr">';
-		echo '<input type="hidden" value="' . $csv_output . '" name="csv_output">';
-	echo "</form>";
 
 } else {
 	echo "<span style='color: red'><strong>You need to provide at least one keyword!</strong></span><br>";

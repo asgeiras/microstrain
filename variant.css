@@ -17,9 +17,9 @@ Controls tables
 */
 
 table.sample {
-        max-width: 940px
-        min-width: 940px
-	border-width: thin;
+    max-width: 940px
+    min-width: 940px
+	border-width: 1px;
 	border-spacing: 0px;
 	border-style: outset;
 	border-color: gray;
