@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'search'){
 				empty($_POST['notterm4']) && 
 				empty($_POST['sign1'])
 			) {
-				header("Location: index.php?mode=list&error=error");
+				header("Location: index.php?mode=search&error=error");
 			}
 		}
 
@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'search'){
 
 	// The reset button clears all submitted variables from all forms
 	if($_POST['reset'] == 'Reset'){
-		if($_GET['reset'] == 'TRUE') {
+		//if($_GET['reset'] == 'TRUE') {
 			//Search:
 			$_SESSION['total_records'] = '';
 			$_SESSION['word'] = '';
@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'search'){
 				$_SESSION["txtComment$i"] = '';
 			}
 			*/
-		}
+		//}
 	}
 
 }

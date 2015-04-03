@@ -103,7 +103,11 @@ print("session:<pre>".print_r($_SESSION, true)."</pre>");
 					if ($_SESSION['login'] != '1') {
 						include("login.php");
 					} else {
-						if (($value == 'search') && ($_POST['isPosted'] == 'TRUE')) {
+						if (($value == 'search') && $_GET['error'] == 'error') {
+							echo "<span style='color: red'><strong>You need to provide at least one keyword!</strong></span><br>";
+							include("search.php");
+						}
+						elseif (($value == 'search') && ($_POST['isPosted'] == 'TRUE')) {
 							include("search.php");
 							include("search1.php");
 						}

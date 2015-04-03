@@ -20,6 +20,16 @@ elseif (isset($_POST['startval'])) {
 if($_GET['type'] == 'word') {
 	$sign1 = $_SESSION['sign1'];
 
+	$term1 = $_POST['term1'];
+	$term2 = $_POST['term2'];
+	$term3 = $_POST['term3'];
+	$term4 = $_POST['term4'];
+
+	$notterm1 = $_POST['notterm1'];
+	$notterm2 = $_POST['notterm2'];
+	$notterm3 = $_POST['notterm3'];
+	$notterm4 = $_POST['notterm4'];
+/*
 	/* moved to actions.php
 	If all search boxes are empty, we do nothing, otherwise we assign the variables and do the search:
 	if(empty($_POST['term1']) && empty($_POST['term2']) && empty($_POST['term3']) && empty($_POST['term4']) && empty($_POST['notterm1']) && empty($_POST['notterm2']) && empty($_POST['notterm3']) && empty($_POST['notterm4']) && empty($_POST['sign1'])) {
@@ -30,8 +40,8 @@ if($_GET['type'] == 'word') {
 	if(empty($_POST['term1']) && empty($_POST['term2']) && empty($_POST['term3']) && empty($_POST['term4']) && empty($_POST['notterm1']) && empty($_POST['notterm2']) && empty($_POST['notterm3']) && empty($_POST['notterm4']) && ($_POST['sign1'])) {
 		
 		// Build SQL statements, one limited and one that counts unlimited
-		$sql = "SELECT * FROM strains WHERE Signature LIKE '%:sign1%' ORDER BY Strain ASC LIMIT :startval, :limitval";
-		$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Signature LIKE ':$sign1%'";
+		$sql = "SELECT * FROM strains WHERE Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
+		$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Signature LIKE :sign1";
 
 		//TODO
 		//Replaced 3/3 by Per Enström
@@ -86,7 +96,7 @@ if($_GET['type'] == 'word') {
 		// Add the additional search parameters to the mysql query if more than one field is used:
 		if($term1 == '') {
 			//TODO
-			print("No keyword entered");
+			print("No keyword entered woop");
 			die();
 			//header("Location: index.php?mode=list&error=error");
 		} else {
@@ -94,53 +104,53 @@ if($_GET['type'] == 'word') {
 			if($term2 == '') {
 				$incl2 = '';
 			} else {
-				$incl2 = "AND (:field1 LIKE '%:term2%' OR :field2 LIKE '%:term2%')";
+				$incl2 = "AND ($field1 LIKE :term2 OR $field2 LIKE :commentterm2)";
 			}
 
 			if($term3 == '') {
 				$incl3 = '';
 			} else {
-				$incl3 = "AND (:field1 LIKE '%:term3%' OR :field2 LIKE '%:term3%')";
+				$incl3 = "AND ($field1 LIKE :term3 OR $field2 LIKE :commentterm3)";
 			}
 
 			if($term4 == '') {
 				$incl4 = '';
 			} else {
-				$incl4 = "AND (:field1 LIKE '%:term4%' OR :field2 LIKE '%:term4%')";
+				$incl4 = "AND ($field1 LIKE :term4 OR $field2 LIKE :commentterm4)";
 			}
 
 			if($notterm1 == '') {
 				$excl1 = '';
 			} else {
-				$excl1 = "AND (:field1 NOT LIKE '%:notterm1%' AND :field2 NOT LIKE '%:notterm1%')";
+				$excl1 = "AND ($field1 NOT LIKE :notterm1 AND $field2 NOT LIKE :commentnotterm1)";
 			}
 
 			if($notterm2 == '') {
 				$excl2 = '';
 			} else {
-				$excl2 = "AND (:field1 NOT LIKE '%:notterm2%' AND :field2 NOT LIKE '%:notterm2%')";
+				$excl2 = "AND ($field1 NOT LIKE :notterm2 AND $field2 NOT LIKE :commentnotterm2)";
 			}
 
 			if($notterm3 == ''){
 				$excl3 = '';
 			} else {
-				$excl3 = "AND (:field1 NOT LIKE '%:notterm3%' AND :field2 NOT LIKE '%:notterm3%')";
+				$excl3 = "AND ($field1 NOT LIKE :notterm3 AND $field2 NOT LIKE :commentnotterm3)";
 			}
 
 			if($notterm4 == ''){
 				$excl4 = '';
 			} else {
-				$excl4 = "AND (:field1 NOT LIKE '%:notterm4%' AND :field2 NOT LIKE '%:notterm4%')";
+				$excl4 = "AND ($field1 NOT LIKE :notterm4 AND $field2 NOT LIKE :commentnotterm4)";
 			}
 
 			if($sign1 == ''){
 				$sign = '';
 			} else {
-				$sign = " AND Signature LIKE '%:sign1%'";
+				$sign = " AND Signature LIKE :sign1";
 			}
 
-			$sql = "SELECT * FROM strains WHERE (:field1 LIKE '%:term1%' OR :field2 LIKE '%:term1%') $incl2 $incl3 $incl4 $excl1 $excl2 $excl3 $excl4 $sign ORDER BY Strain ASC LIMIT :startval, :limitval";
-			$sql2 = "SELECT COUNT(Strain) FROM strains WHERE (:field1 LIKE '%:term1%' OR :field2 LIKE '%:term1%') $incl2 $incl3 $incl4 $excl1 $excl2 $excl3 $excl4 $sign";
+			$sql = "SELECT * FROM strains WHERE ($field1 LIKE :term1 OR $field2 LIKE :commentterm1) $incl2 $incl3 $incl4 $excl1 $excl2 $excl3 $excl4 $sign ORDER BY Strain ASC LIMIT :startval, :limitval";
+			$sql2 = "SELECT COUNT(Strain) FROM strains WHERE ($field1 LIKE :term1 OR $field2 LIKE :commentterm1) $incl2 $incl3 $incl4 $excl1 $excl2 $excl3 $excl4 $sign";
 		}
 	}
 }
@@ -159,32 +169,32 @@ if($_GET['type'] == 'number') {
 
 		// If only signature box is filled
 		if(empty($_POST['minNum']) && empty($_POST['maxNum']) && ($_POST['sign1'])) {
-			$sql = "SELECT * FROM strains WHERE Signature LIKE '%:sign1%' ORDER BY Strain ASC LIMIT :startval, :limitval";
-			$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Signature LIKE ':$sign1%'";
+			$sql = "SELECT * FROM strains WHERE Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
+			$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Signature LIKE :sign1";
 			$message = "Your search for the above keyword in <strong>Signature</strong> resulted in ";
 		} else {
 			// If both min and max are filled, and min is larger than max: invert the search
 			if ($_POST['minNum'] != '' && $_POST['maxNum'] != '' && $_POST['minNum'] > $_POST['maxNum']) {
-				$sql = "SELECT * FROM strains WHERE Strain >= ':maxNum' AND Strain <= ':minNum' AND Signature LIKE '%:sign1%' ORDER BY Strain ASC LIMIT :startval, :limitval";
-				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain >= ':maxNum' AND Strain <= ':minNum' AND Signature LIKE '%:sign1%'";
+				$sql = "SELECT * FROM strains WHERE Strain >= ':maxNum' AND Strain <= ':minNum' AND Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
+				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain >= ':maxNum' AND Strain <= ':minNum' AND Signature LIKE :sign1";
 			}
 
 			// If both min and max are filled, and max is -- as intended -- larger than min: search normally
 			if ($_POST['minNum'] != '' && $_POST['maxNum'] != '' && $_POST['minNum'] <= $_POST['maxNum']){
-				$sql = "SELECT * FROM strains WHERE Strain >= ':minNum' AND Strain <= ':maxNum' AND Signature LIKE '%:sign1%' ORDER BY Strain ASC LIMIT :startval, :limitval";
-				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain >= ':minNum' AND Strain <= ':maxNum' AND Signature LIKE '%:sign1%'";
+				$sql = "SELECT * FROM strains WHERE Strain >= ':minNum' AND Strain <= ':maxNum' AND Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
+				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain >= ':minNum' AND Strain <= ':maxNum' AND Signature LIKE :sign1";
 			}
 
 			// If max is empty while min is filled: only find the entered strain
 			if ($_POST['minNum'] != '' && $_POST['maxNum'] == '') {
-				$sql = "SELECT * FROM strains WHERE Strain = ':minNum' AND Signature LIKE '%:sign1%' ORDER BY Strain ASC LIMIT :startval, :limitval";
-				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain = ':minNum' AND Signature LIKE '%:sign1%'";
+				$sql = "SELECT * FROM strains WHERE Strain = ':minNum' AND Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
+				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain = ':minNum' AND Signature LIKE :sign1";
 			}
 			
 			// If min is empty while max is filled: only find the entered strain
 			if ($_POST['minNum'] == '' && $_POST['maxNum'] != '') {
-				$sql = "SELECT * FROM strains WHERE Strain = ':maxNum' AND Signature LIKE '%:sign1%' ORDER BY Strain ASC LIMIT :startval, :limitval";
-				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain = ':maxNum' AND Signature LIKE '%:sign1%'";
+				$sql = "SELECT * FROM strains WHERE Strain = ':maxNum' AND Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
+				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain = ':maxNum' AND Signature LIKE :sign1";
 			}
 		}
 	}
@@ -232,30 +242,54 @@ if ($_GET['mode'] == 'edit2') {
 
 // Do the actual mysql query
 if($sql){
-
+	//$sql = "SELECT * FROM strains WHERE Genotype LIKE :term1 AND Genotype NOT LIKE :notterm1 AND Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
 	// Prepare PDO statements
 	$stmt = $dbh->prepare($sql);
 	$stmtTotal = $dbh->prepare($sql2);
 
 	// Bind parameters
 	// Limited rows
-	$stmt->bindParam(":sign1", $sign1);
+	$sign1 = '%' . $sign1 . '%';
+	$stmt->bindParam(':sign1', $sign1);
 
-	$stmt->bindParam(":startval", $startval);
-	$stmt->bindParam(":limitval", $limitval);
+	$stmt->bindParam(':startval', $startval, PDO::PARAM_INT);
+	$stmt->bindParam(':limitval', $limit, PDO::PARAM_INT);
 
-	$stmt->bindParam(":field1", $field1);
-	$stmt->bindParam(":field2", $field2);
+	$term1 = '%' . $term1 . '%';
+	$term2 = '%' . $term2 . '%';
+	$term3 = '%' . $term3 . '%';
+	$term4 = '%' . $term4 . '%';
+	$commentTerm1 = $term1;
+	$commentTerm2 = $term2;
+	$commentTerm3 = $term3;
+	$commentTerm4 = $term4;
 
-	$stmt->bindParam(":term1", $term1);
-	$stmt->bindParam(":term2", $term2);
-	$stmt->bindParam(":term3", $term3);
-	$stmt->bindParam(":term4", $term4);
+	$stmt->bindParam(":term1", $term1, PDO::PARAM_STR);
+	$stmt->bindParam(":term2", $term2, PDO::PARAM_STR);
+	$stmt->bindParam(":term3", $term3, PDO::PARAM_STR);
+	$stmt->bindParam(":term4", $term4, PDO::PARAM_STR);
+	$stmt->bindParam(":commentterm1", $commentTerm1, PDO::PARAM_STR);
+	$stmt->bindParam(":commentterm2", $commentTerm2, PDO::PARAM_STR);
+	$stmt->bindParam(":commentterm3", $commentTerm3, PDO::PARAM_STR);
+	$stmt->bindParam(":commentterm4", $commentTerm4, PDO::PARAM_STR);
 
-	$stmt->bindParam(":notterm1", $notterm1);
-	$stmt->bindParam(":notterm2", $notterm2);
-	$stmt->bindParam(":notterm3", $notterm3);
-	$stmt->bindParam(":notterm4", $notterm4);
+	$notterm1 = '%' . $notterm1 . '%';
+	$notterm2 = '%' . $notterm2 . '%';
+	$notterm3 = '%' . $notterm3 . '%';
+	$notterm4 = '%' . $notterm4 . '%';
+	$commentNotterm1 = $notterm1;
+	$commentNotterm2 = $notterm2;
+	$commentNotterm3 = $notterm3;
+	$commentNotterm4 = $notterm4;
+
+	$stmt->bindParam(":notterm1", $notterm1, PDO::PARAM_STR);
+	$stmt->bindParam(":notterm2", $notterm2, PDO::PARAM_STR);
+	$stmt->bindParam(":notterm3", $notterm3, PDO::PARAM_STR);
+	$stmt->bindParam(":notterm4", $notterm4, PDO::PARAM_STR);
+	$stmt->bindParam(":commentnotterm1", $commentNotterm1, PDO::PARAM_STR);
+	$stmt->bindParam(":commentnotterm2", $commentNotterm2, PDO::PARAM_STR);
+	$stmt->bindParam(":commentnotterm3", $commentNotterm3, PDO::PARAM_STR);
+	$stmt->bindParam(":commentnotterm4", $commentNotterm4, PDO::PARAM_STR);
 
 	$stmt->bindParam(":minNum", $minNum);
 	$stmt->bindParam(":maxNum", $maxNum);
@@ -267,18 +301,23 @@ if($sql){
 	// Total rows
 	$stmtTotal->bindParam(":sign1", $sign1);
 
-	$stmtTotal->bindParam(":field1", $field1);
-	$stmtTotal->bindParam(":field2", $field2);
-
 	$stmtTotal->bindParam(":term1", $term1);
 	$stmtTotal->bindParam(":term2", $term2);
 	$stmtTotal->bindParam(":term3", $term3);
 	$stmtTotal->bindParam(":term4", $term4);
+	$stmtTotal->bindParam(":commentterm1", $commentTerm1, PDO::PARAM_STR);
+	$stmtTotal->bindParam(":commentterm2", $commentTerm2, PDO::PARAM_STR);
+	$stmtTotal->bindParam(":commentterm3", $commentTerm3, PDO::PARAM_STR);
+	$stmtTotal->bindParam(":commentterm4", $commentTerm4, PDO::PARAM_STR);
 
 	$stmtTotal->bindParam(":notterm1", $notterm1);
 	$stmtTotal->bindParam(":notterm2", $notterm2);
 	$stmtTotal->bindParam(":notterm3", $notterm3);
 	$stmtTotal->bindParam(":notterm4", $notterm4);
+	$stmtTotal->bindParam(":commentnotterm1", $commentNotterm1, PDO::PARAM_STR);
+	$stmtTotal->bindParam(":commentnotterm2", $commentNotterm2, PDO::PARAM_STR);
+	$stmtTotal->bindParam(":commentnotterm3", $commentNotterm3, PDO::PARAM_STR);
+	$stmtTotal->bindParam(":commentnotterm4", $commentNotterm4, PDO::PARAM_STR);
 
 	$stmtTotal->bindParam(":minNum", $minNum);
 	$stmtTotal->bindParam(":maxNum", $maxNum);
@@ -292,9 +331,36 @@ if($sql){
 	$stmtTotal->execute();
 
 	// Fetch results
-	$result = $stmt->fetchAll();
+	$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	$showing_records = count($result);
 	$total_records = $stmtTotal->fetchColumn();
+
+
+// Troubleshooting
+	echo $sql;
+	echo "<br>";
+	echo $sql2;
+	echo "<br>";
+	echo "sign1: $sign1";
+	echo "<br>";
+	echo "startval: $startval";
+	echo "<br>";
+	echo "limitval: $limit";
+	echo "<br>";
+	echo "term1: $term1";
+	echo "<br>";
+	echo "notterm1: $notterm1";
+	echo "<br>";
+	echo "comterm1: $commentTerm1";
+	echo "<br>";
+	echo "comnotterm1: $commentNotterm1";
+	echo "<br>";
+	echo "field1: $field1";
+	echo "<br>";
+	echo "field2: $field2";
+	echo "<br>";
+	echo "total_records: $total_records<br>";
+print("result:<pre>".print_r($result, true)."</pre>");
 
 	$_SESSION['total_records'] = $total_records;
 
@@ -352,6 +418,8 @@ if($sql){
 				echo "</th>";
 			echo "</tr>";
 			// WORK DONE TO HERE
+
+
 			echo "<form action='index.php?mode=myList' name='selectRow' method='post'>";
 				echo "<input type='submit' title='Show a table of only the selected strains' name='show' value='Show selected'/>";
 
@@ -361,8 +429,13 @@ if($sql){
 
 				echo "<input type='submit' title='Open the selected strains in a printer-friendly table' name='print' value='print selected'/>";
 
-				$csv_output .= "Strain;Genotype;Recipient;Donor;Comment;Signature;Created\n";
-				while ($row = mysql_fetch_array($result)){
+				// Prepare CSV header
+				$csv_hdr .= "Strain;Genotype;Recipient;Donor;Comment;Signature;Created\n";
+
+				// Loop through all strains
+				foreach ($result as $row) {
+					
+					// Convert html characters to printable
 					$genotype = htmlspecialchars($row['Genotype']);
 					$genotype1 = htmlspecialchars($row['Genotype']);
 					$comment = htmlspecialchars($row['Comment']);
@@ -373,7 +446,7 @@ if($sql){
 					if(($_SESSION['genotype'] == 'genotype')){
 
 						if($_SESSION['term1'] != '') {
-							$genotype = preg_replace('/'.preg_quote($_SESSION['term1'], '/').'/i', "¢$0¦", $genotype);
+							$genotype = preg_replace('/' . preg_quote($_SESSION['term1'], '/') . '/i', "¢$0¦", $genotype);
 						}
 
 						if($_SESSION['term2'] != '') {
@@ -417,8 +490,8 @@ if($sql){
 
 					echo "<tr>";
 						echo "<td>";    
-							echo 'DA' .$row['Strain'];
-							$csv_output .= "DA". $row['Strain'] . "; ";
+							echo 'DA' . $row['Strain'];
+							$csv_output .= "DA" . $row['Strain'] . "; ";
 						echo "</td>";
 
 						echo "<td>"; 
@@ -431,8 +504,8 @@ if($sql){
 								echo "";
 								$csv_output .= "; ";
 							} else {
-								echo "<a href=index.php?mode=myNum&myNum=". $row['Recipient']. " title='View DA". $row['Recipient']. " in a new tab'>DA". $row['Recipient']. "</a>";
-								$csv_output .= "DA". $row['Recipient'] . "; ";
+								echo "<a href=index.php?mode=myNum&myNum=" . $row['Recipient'] . " title='View DA" . $row['Recipient']. " in a new tab'>DA" . $row['Recipient'] . "</a>";
+								$csv_output .= "DA" . $row['Recipient'] . "; ";
 							}
 						echo "</td>";
 
@@ -441,8 +514,8 @@ if($sql){
 								echo "";
 								$csv_output .= "; ";
 							} else {
-								echo "<a href=index.php?mode=myNum&myNum=". $row['Donor']. " title='View DA". $row['Donor']. " in a new tab'>DA". $row['Donor']. "</a>";
-								$csv_output .= "DA". $row['Donor'] . "; ";
+								echo "<a href=index.php?mode=myNum&myNum=" . $row['Donor'] . " title='View DA" . $row['Donor'] . " in a new tab'>DA" . $row['Donor'] . "</a>";
+								$csv_output .= "DA" . $row['Donor'] . "; ";
 							}
 						echo "</td>";
 
@@ -465,7 +538,9 @@ if($sql){
 								$csv_output .= $row['Created'] . "\n";
 							}
 						echo "</td>";
-						echo "<td><div align=center><input type=checkbox name='selected[]' value=". $row['Strain']. "></div></td>";
+						echo "<td>";
+							echo "<div align=center><input type=checkbox name='selected[]' value=" . $row['Strain'] . "></div>";
+						echo "</td>";
 					echo "</tr>";
 					//Stop making the table
 				}
@@ -474,7 +549,9 @@ if($sql){
 		echo "</table>";
 
 		// Close the mysql connection
-		mysql_close();
+		$stmt->closeCursor();
+		$stmtTotal->closeCursor();
+
 		if ($total_records > $limit) {
 
 			echo "<br>Page <span style='font-weight: bold'>" . $page . "</span> of <span style='font-weight: bold'>" . $pages . "</span>.";

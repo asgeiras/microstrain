@@ -26,7 +26,8 @@ $today = date ('Y-m-d H:i:s');
 // Open database connection
 try {
 	$dbh = new PDO("mysql:host=$hostname;dbname=$dbname;charset=utf8mb4", $dbuser, $dbpassword);
-	echo "connected to database";
+	$dbh->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+	//echo "connected to database";
 }
 catch(PDOException $e) {
 	echo $e->getMessage();
