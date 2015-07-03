@@ -1,4 +1,53 @@
+ <?PHP
+// Limit the number of entries shown in the table:
+if(isset($_GET['limit'])){
+	$limit = $_GET['limit'];
+}
+elseif(isset($_POST['limit'])) {
+	$limit = $_POST['limit'];
+}
+elseif(isset($_SESSION['limit'])) {
+	$limit = $_SESSION['limit'];
+}
+else {
+	$limit = 100;
+}
 
+if (isset($_GET['page'])) {
+	$page = ($_GET['page']);
+} else { 
+	$page = 1;
+}
+
+ // Set variables for min and max number as well as signature, in order Get, Post, Session.
+if(isset($_GET['minNum']) || isset($_GET['maxNum']) || isset($_GET['sign1'])){
+	$minNum = $_GET['minNum'];
+	$maxNum = $_GET['maxNum'];
+	$sign1 = $_GET['sign1'];
+} else {
+	if(isset($_POST['minNum'])) {
+		$minNum = $_POST['minNum'];
+	}
+	else {
+		$minNum = $_SESSION['minNum'];
+	}
+
+	if(isset($_POST['maxNum'])) {
+		$maxNum = $_POST['maxNum'];
+	}
+	else {
+		$maxNum = $_SESSION['maxNum'];
+	}
+
+	if(isset($_POST['sign1'])) {
+		$sign1 = $_POST['sign1'];
+	}
+	else {
+		$sign1 = $_SESSION['sign1'];
+	}
+}
+
+?>
 <form name="search" id="search" action="index.php?mode=search&amp;type=<?php echo $_GET['type'];?>" method="post">
 
 	<?php
@@ -71,9 +120,9 @@
 					<input type="text" name="sign1" value="<?php echo $_SESSION['sign1']; ?>">
 				</td>
 				<td colspan="2">
-					<input type="text" name="limit" size=4 maxlength="5" value="<?php if(isset($_POST['limit'])) {echo $_POST['limit'];}else {echo 100;} ?>">
-					<input type="hidden" name="startval" value="<?php if(isset($_POST['startval'])) {echo $_POST['startval'];}else {echo 1;} ?>">
-					<input type="hidden" name="page">
+					<input type="text" name="limit" size=4 maxlength="5" value="<?php echo $limit; ?>">
+					<input type="hidden" name="startval" value="<?php echo $startval; ?>">
+					<input type="hidden" name="page" value="1">
 				</td>
 			</tr>
 
@@ -102,24 +151,24 @@
 				<td colspan="2">Between:</td>
 			</tr>
 	    	<tr>
-	    		<td colspan="2"><input type="text" name="minNum" maxlength="5" value="<?php echo $_SESSION['minNum']; ?>" /></td>
+	    		<td colspan="2"><input type="text" name="minNum" maxlength="5" value="<?php echo $minNum; ?>" /></td>
 	    	</tr>
 			<tr>
 				<td colspan="2">And:</td>
 			</tr>
 	    	<tr>
-	    		<td colspan="2"><input type="text" name="maxNum" maxlength="5" value="<?php echo $_SESSION['maxNum']; ?>" /></td>
+	    		<td colspan="2"><input type="text" name="maxNum" maxlength="5" value="<?php echo $maxNum; ?>" /></td>
 	    	</tr>
 			<tr>
 				<td>Limit to strains frozen by:</td>
 				<td>Show:</td>
 			</tr>
 			<tr>
-				<td><input type="text" name="sign1" value="<?php echo $_SESSION['sign1']; ?>"></td>
+				<td><input type="text" name="sign1" value="<?php echo $sign1; ?>"></td>
 				<td>
-					<input type="text" name="limit" size=4 maxlength="5" value="<?php if(isset($_POST['limit'])) {echo $_POST['limit'];}else {echo 100;} ?>">
-					<input type="hidden" name="startval" value="<?php if(isset($_POST['startval'])) {echo $_POST['startval'];}else {echo 1;} ?>">
-					<input type="hidden" name="page">
+					<input type="text" name="limit" size=4 maxlength="5" value="<?php echo $limit; ?>">
+					<input type="hidden" name="startval" value="<?php echo $startval; ?>">
+					<input type="hidden" name="page" value="1">
 				</td>
 			</tr>
 

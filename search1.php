@@ -1,21 +1,5 @@
 <?php
 
-// Limit the number of entries shown in the table:
-if (isset($_POST['limit'])) {
-	$limit = $_POST['limit'];
-} else { 
-	$limit = 100; 
-}
-
-if (isset($_GET['startval'])) {
-	$startval = ($_GET['startval']-1);
-}
-elseif (isset($_POST['startval'])) {
-	$startval = ($_POST['startval']-1);
-} else { 
-	$startval = 0;
-}
-
 //Begin Search for keywords//
 if($_GET['type'] == 'word') {
 	$sign1 = $_SESSION['sign1'];
@@ -29,7 +13,7 @@ if($_GET['type'] == 'word') {
 	$notterm2 = $_POST['notterm2'];
 	$notterm3 = $_POST['notterm3'];
 	$notterm4 = $_POST['notterm4'];
-/*
+
 	/* moved to actions.php
 	If all search boxes are empty, we do nothing, otherwise we assign the variables and do the search:
 	if(empty($_POST['term1']) && empty($_POST['term2']) && empty($_POST['term3']) && empty($_POST['term4']) && empty($_POST['notterm1']) && empty($_POST['notterm2']) && empty($_POST['notterm3']) && empty($_POST['notterm4']) && empty($_POST['sign1'])) {
@@ -158,43 +142,41 @@ if($_GET['type'] == 'word') {
 
 //Begin Search for Strain numbers//
 if($_GET['type'] == 'number') {
-	$minNum = $_SESSION['minNum'];
-	$maxNum = $_SESSION['maxNum'];
-	$sign1 = $_SESSION['sign1'];
-	$myList = $_GET['myList'];
+
+	//$myList = $_GET['myList'];
 	$message = "Your search resulted in ";
 
-	//If all search boxes are empty, we do nothing, otherwise we do the search:
-	if(!(empty($_POST['minNum']) && empty($_POST['maxNum']) && empty($_POST['sign1']))) {
+	//If all search variables are empty, we do nothing, otherwise we do the search:
+	if(!(empty($minNum) && empty($maxNum) && empty($sign1))) {
 
 		// If only signature box is filled
-		if(empty($_POST['minNum']) && empty($_POST['maxNum']) && ($_POST['sign1'])) {
+		if(empty($minNum) && empty($maxNum) && !empty($sign1)) {
 			$sql = "SELECT * FROM strains WHERE Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
 			$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Signature LIKE :sign1";
 			$message = "Your search for the above keyword in <strong>Signature</strong> resulted in ";
 		} else {
 			// If both min and max are filled, and min is larger than max: invert the search
-			if ($_POST['minNum'] != '' && $_POST['maxNum'] != '' && $_POST['minNum'] > $_POST['maxNum']) {
-				$sql = "SELECT * FROM strains WHERE Strain >= ':maxNum' AND Strain <= ':minNum' AND Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
-				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain >= ':maxNum' AND Strain <= ':minNum' AND Signature LIKE :sign1";
+			if (!empty($minNum) && !empty($maxNum) != '' && $minNum > $maxNum) {
+				$sql = "SELECT * FROM strains WHERE Strain >= :maxNum AND Strain <= :minNum AND Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
+				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain >= :maxNum AND Strain <= :minNum AND Signature LIKE :sign1";
 			}
 
 			// If both min and max are filled, and max is -- as intended -- larger than min: search normally
-			if ($_POST['minNum'] != '' && $_POST['maxNum'] != '' && $_POST['minNum'] <= $_POST['maxNum']){
-				$sql = "SELECT * FROM strains WHERE Strain >= ':minNum' AND Strain <= ':maxNum' AND Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
-				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain >= ':minNum' AND Strain <= ':maxNum' AND Signature LIKE :sign1";
+			if (!empty($minNum) && !empty($maxNum) && $minNum <= $maxNum){
+				$sql = "SELECT * FROM strains WHERE Strain >= :minNum AND Strain <= :maxNum AND Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
+				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain >= :minNum AND Strain <= :maxNum AND Signature LIKE :sign1";
 			}
 
 			// If max is empty while min is filled: only find the entered strain
-			if ($_POST['minNum'] != '' && $_POST['maxNum'] == '') {
-				$sql = "SELECT * FROM strains WHERE Strain = ':minNum' AND Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
-				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain = ':minNum' AND Signature LIKE :sign1";
+			if (!empty($minNum) && empty($maxNum)) {
+				$sql = "SELECT * FROM strains WHERE Strain = :minNum AND Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
+				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain = :minNum AND Signature LIKE :sign1";
 			}
 			
 			// If min is empty while max is filled: only find the entered strain
-			if ($_POST['minNum'] == '' && $_POST['maxNum'] != '') {
-				$sql = "SELECT * FROM strains WHERE Strain = ':maxNum' AND Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
-				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain = ':maxNum' AND Signature LIKE :sign1";
+			if (empty($minNum) && !empty($maxNum)) {
+				$sql = "SELECT * FROM strains WHERE Strain = :maxNum AND Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
+				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain = :maxNum AND Signature LIKE :sign1";
 			}
 		}
 	}
@@ -242,18 +224,12 @@ if ($_GET['mode'] == 'edit2') {
 
 // Do the actual mysql query
 if($sql){
-	//$sql = "SELECT * FROM strains WHERE Genotype LIKE :term1 AND Genotype NOT LIKE :notterm1 AND Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
 	// Prepare PDO statements
 	$stmt = $dbh->prepare($sql);
 	$stmtTotal = $dbh->prepare($sql2);
 
-	// Bind parameters
-	// Limited rows
+	// Prepare some variables for binding
 	$sign1 = '%' . $sign1 . '%';
-	$stmt->bindParam(':sign1', $sign1);
-
-	$stmt->bindParam(':startval', $startval, PDO::PARAM_INT);
-	$stmt->bindParam(':limitval', $limit, PDO::PARAM_INT);
 
 	$term1 = '%' . $term1 . '%';
 	$term2 = '%' . $term2 . '%';
@@ -264,15 +240,6 @@ if($sql){
 	$commentTerm3 = $term3;
 	$commentTerm4 = $term4;
 
-	$stmt->bindParam(":term1", $term1, PDO::PARAM_STR);
-	$stmt->bindParam(":term2", $term2, PDO::PARAM_STR);
-	$stmt->bindParam(":term3", $term3, PDO::PARAM_STR);
-	$stmt->bindParam(":term4", $term4, PDO::PARAM_STR);
-	$stmt->bindParam(":commentterm1", $commentTerm1, PDO::PARAM_STR);
-	$stmt->bindParam(":commentterm2", $commentTerm2, PDO::PARAM_STR);
-	$stmt->bindParam(":commentterm3", $commentTerm3, PDO::PARAM_STR);
-	$stmt->bindParam(":commentterm4", $commentTerm4, PDO::PARAM_STR);
-
 	$notterm1 = '%' . $notterm1 . '%';
 	$notterm2 = '%' . $notterm2 . '%';
 	$notterm3 = '%' . $notterm3 . '%';
@@ -282,23 +249,7 @@ if($sql){
 	$commentNotterm3 = $notterm3;
 	$commentNotterm4 = $notterm4;
 
-	$stmt->bindParam(":notterm1", $notterm1, PDO::PARAM_STR);
-	$stmt->bindParam(":notterm2", $notterm2, PDO::PARAM_STR);
-	$stmt->bindParam(":notterm3", $notterm3, PDO::PARAM_STR);
-	$stmt->bindParam(":notterm4", $notterm4, PDO::PARAM_STR);
-	$stmt->bindParam(":commentnotterm1", $commentNotterm1, PDO::PARAM_STR);
-	$stmt->bindParam(":commentnotterm2", $commentNotterm2, PDO::PARAM_STR);
-	$stmt->bindParam(":commentnotterm3", $commentNotterm3, PDO::PARAM_STR);
-	$stmt->bindParam(":commentnotterm4", $commentNotterm4, PDO::PARAM_STR);
-
-	$stmt->bindParam(":minNum", $minNum);
-	$stmt->bindParam(":maxNum", $maxNum);
-
-	$stmt->bindParam(":myNum", $myNum);
-
-	$stmt->bindParam(":list", $list);
-
-	// Total rows
+	// Bind parameters for total number of rows
 	$stmtTotal->bindParam(":sign1", $sign1);
 
 	$stmtTotal->bindParam(":term1", $term1);
@@ -326,17 +277,71 @@ if($sql){
 
 	$stmtTotal->bindParam(":list", $list);
 
-	// Execute statements
-	$stmt->execute();
+	//Exectue total statement
 	$stmtTotal->execute();
+
+	// Fetch total number of rows
+	$total_records = $stmtTotal->fetchColumn();
+
+	// Convert pages to starting row number
+	if ($total_records > $limit) {
+		$pages = ceil($total_records / $limit);
+
+		// Set page number to highest possible if too big
+		if($page > $pages){
+			$page = $pages;
+		}
+
+		$startval = ($page - 1) * $limit;
+	} else {
+		$pages = 1;
+		$startval = 0;
+	}
+
+	echo "<p>Pages: $pages</p>";
+	echo "<p>Page: $page</p>";
+	echo "<p>Startval: $startval</p>";
+	echo "<p>Limit: $limit</p>";
+
+	// Bind parameters for limited rows
+	$stmt->bindParam(':sign1', $sign1);
+
+	$stmt->bindParam(':startval', $startval, PDO::PARAM_INT);
+	$stmt->bindParam(':limitval', $limit, PDO::PARAM_INT);
+
+	$stmt->bindParam(":term1", $term1, PDO::PARAM_STR);
+	$stmt->bindParam(":term2", $term2, PDO::PARAM_STR);
+	$stmt->bindParam(":term3", $term3, PDO::PARAM_STR);
+	$stmt->bindParam(":term4", $term4, PDO::PARAM_STR);
+	$stmt->bindParam(":commentterm1", $commentTerm1, PDO::PARAM_STR);
+	$stmt->bindParam(":commentterm2", $commentTerm2, PDO::PARAM_STR);
+	$stmt->bindParam(":commentterm3", $commentTerm3, PDO::PARAM_STR);
+	$stmt->bindParam(":commentterm4", $commentTerm4, PDO::PARAM_STR);
+
+	$stmt->bindParam(":notterm1", $notterm1, PDO::PARAM_STR);
+	$stmt->bindParam(":notterm2", $notterm2, PDO::PARAM_STR);
+	$stmt->bindParam(":notterm3", $notterm3, PDO::PARAM_STR);
+	$stmt->bindParam(":notterm4", $notterm4, PDO::PARAM_STR);
+	$stmt->bindParam(":commentnotterm1", $commentNotterm1, PDO::PARAM_STR);
+	$stmt->bindParam(":commentnotterm2", $commentNotterm2, PDO::PARAM_STR);
+	$stmt->bindParam(":commentnotterm3", $commentNotterm3, PDO::PARAM_STR);
+	$stmt->bindParam(":commentnotterm4", $commentNotterm4, PDO::PARAM_STR);
+
+	$stmt->bindParam(":minNum", $minNum);
+	$stmt->bindParam(":maxNum", $maxNum);
+
+	$stmt->bindParam(":myNum", $myNum);
+
+	$stmt->bindParam(":list", $list);
+
+	// Execute statement
+	$stmt->execute();
 
 	// Fetch results
 	$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	$showing_records = count($result);
-	$total_records = $stmtTotal->fetchColumn();
 
-
-// Troubleshooting
+	// Troubleshooting
 	echo $sql;
 	echo "<br>";
 	echo $sql2;
@@ -357,10 +362,15 @@ if($sql){
 	echo "<br>";
 	echo "field1: $field1";
 	echo "<br>";
+	echo "minNum: $minNum";
+	echo "<br>";
+	echo "maxNum: $maxNum";
+	echo "<br>";
 	echo "field2: $field2";
 	echo "<br>";
 	echo "total_records: $total_records<br>";
-print("result:<pre>".print_r($result, true)."</pre>");
+	echo "total_records session: " . $_SESSION['total_records'] . "<br>";
+	//print("result:<pre>".print_r($result, true)."</pre>");
 
 	$_SESSION['total_records'] = $total_records;
 
@@ -384,18 +394,25 @@ print("result:<pre>".print_r($result, true)."</pre>");
 		if ($total_records > $limit) {
 			echo "Showing <span style='font-weight: bold'> " . $showing_records . "</span> strains per page starting at no. <span style='font-weight: bold'>" . ($startval+1) . "</span>:<br>"; 
 
-			$pages = ceil($total_records / $limit);
-			$page = $_POST['page'];
-
 			echo "<br>Page <span style='font-weight: bold'>" . $page . "</span> of <span style='font-weight: bold'>" . $pages . "</span>. ";
 			
 			// Print pagination links
 			for($n = 1; $n <= $pages; $n++) {
-				if ($n != $page){
-					echo ' <a href="javascript:pageforward(\'' . $n . '\');">' . $n . '</a> ';
-				} else {
-					echo " <span style='font-weight: bold; color: blue;'>" . $n . "</span> ";
-				} 
+
+				if($_GET['type'] == 'word'){
+					if ($n != $page){
+						echo ' <a href="javascript:pageforward(\'' . $n . '\');">' . $n . '</a> ';
+					} else {
+						echo " <span style='font-weight: bold; color: blue;'>" . $n . "</span> ";
+					} 
+				}
+				elseif($_GET['type'] == 'number'){
+					if ($n != $page){
+						echo ' <a href="?mode=search&amp;type=number&amp;search=1&amp;minNum=' . $minNum . '&amp;maxNum=' . $maxNum . '&amp;limit=' . $limit . '&amp;page=' . $n . '">' . $n . '</a> ';
+					} else {
+						echo " <span style='font-weight: bold; color: blue;'>" . $n . "</span> ";
+					} 
+				}
 			}
 		}
 
