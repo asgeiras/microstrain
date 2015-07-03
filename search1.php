@@ -229,7 +229,7 @@ if($sql){
 	$stmtTotal = $dbh->prepare($sql2);
 
 	// Prepare some variables for binding
-	$sign1 = '%' . $sign1 . '%';
+	$sign1param = '%' . $sign1 . '%';
 
 	$term1 = '%' . $term1 . '%';
 	$term2 = '%' . $term2 . '%';
@@ -250,7 +250,7 @@ if($sql){
 	$commentNotterm4 = $notterm4;
 
 	// Bind parameters for total number of rows
-	$stmtTotal->bindParam(":sign1", $sign1);
+	$stmtTotal->bindParam(":sign1", $sign1param);
 
 	$stmtTotal->bindParam(":term1", $term1);
 	$stmtTotal->bindParam(":term2", $term2);
@@ -304,7 +304,7 @@ if($sql){
 	echo "<p>Limit: $limit</p>";
 
 	// Bind parameters for limited rows
-	$stmt->bindParam(':sign1', $sign1);
+	$stmt->bindParam(':sign1', $sign1param);
 
 	$stmt->bindParam(':startval', $startval, PDO::PARAM_INT);
 	$stmt->bindParam(':limitval', $limit, PDO::PARAM_INT);
@@ -408,7 +408,7 @@ if($sql){
 				}
 				elseif($_GET['type'] == 'number'){
 					if ($n != $page){
-						echo ' <a href="?mode=search&amp;type=number&amp;search=1&amp;minNum=' . $minNum . '&amp;maxNum=' . $maxNum . '&amp;limit=' . $limit . '&amp;page=' . $n . '">' . $n . '</a> ';
+						echo ' <a href="?mode=search&amp;type=number&amp;search=1&amp;minNum=' . $minNum . '&amp;maxNum=' . $maxNum . '&amp;sign1=' . $sign1 . '&amp;limit=' . $limit . '&amp;page=' . $n . '">' . $n . '</a> ';
 					} else {
 						echo " <span style='font-weight: bold; color: blue;'>" . $n . "</span> ";
 					} 
