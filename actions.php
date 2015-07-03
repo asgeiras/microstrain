@@ -69,6 +69,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'search'){
 			$_SESSION['notterm4'] = $_POST['notterm4'];
 			$_SESSION['genotype'] = $_POST['check']['genotype'];
 			$_SESSION['comment'] = $_POST['check']['comment'];
+			if(!empty($_POST['check']['genotype'])){
+				$_SESSION['searchgenotype'] = 1;
+			} else {
+				$_SESSION['searchgenotype'] = 0;
+			}
+			if(!empty($_POST['check']['comment'])){
+				$_SESSION['searchcomment'] = 1;
+			} else {
+				$_SESSION['searchcomment'] = 0;
+			}
 
 			// If all search boxes are empty, redirect to error
 			if(empty($_POST['term1']) && 

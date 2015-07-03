@@ -19,11 +19,29 @@ if (isset($_GET['page'])) {
 	$page = 1;
 }
 
- // Set variables for min and max number as well as signature, in order Get, Post, Session.
-if(isset($_GET['minNum']) || isset($_GET['maxNum']) || isset($_GET['sign1'])){
+// Set variables for min and max number as well as signature, in order Get, Post, Session.
+if($_GET['search'] == 1){
 	$minNum = $_GET['minNum'];
 	$maxNum = $_GET['maxNum'];
 	$sign1 = $_GET['sign1'];
+
+	$term1 = $_GET['term1'];
+	$term2 = $_GET['term2'];
+	$term3 = $_GET['term3'];
+	$term4 = $_GET['term4'];
+
+	$notterm1 = $_GET['notterm1'];
+	$notterm2 = $_GET['notterm2'];
+	$notterm3 = $_GET['notterm3'];
+	$notterm4 = $_GET['notterm4'];
+
+	$searchgenotype = $_GET['searchgenotype'];
+	$searchcomment  = $_GET['searchcomment'];
+
+	if(!isset($_GET['searchgenotype']) && !isset($_GET['searchcomment'])){
+		$searchgenotype = 1;
+	}
+
 } else {
 	if(isset($_POST['minNum'])) {
 		$minNum = $_POST['minNum'];
@@ -45,6 +63,79 @@ if(isset($_GET['minNum']) || isset($_GET['maxNum']) || isset($_GET['sign1'])){
 	else {
 		$sign1 = $_SESSION['sign1'];
 	}
+
+	// Terms
+	if(isset($_POST['term1'])) {
+		$term1 = $_POST['term1'];
+	}
+	else {
+		$term1 = $_SESSION['term1'];
+	}
+
+	if(isset($_POST['term2'])) {
+		$term2 = $_POST['term2'];
+	}
+	else {
+		$term2 = $_SESSION['term2'];
+	}
+
+	if(isset($_POST['term3'])) {
+		$term3 = $_POST['term3'];
+	}
+	else {
+		$term3 = $_SESSION['term3'];
+	}
+
+	if(isset($_POST['term4'])) {
+		$term4 = $_POST['term4'];
+	}
+	else {
+		$term4 = $_SESSION['term4'];
+	}
+
+	// Not-terms
+	if(isset($_POST['notterm1'])) {
+		$notterm1 = $_POST['notterm1'];
+	}
+	else {
+		$notterm1 = $_SESSION['notterm1'];
+	}
+
+	if(isset($_POST['notterm2'])) {
+		$notterm2 = $_POST['notterm2'];
+	}
+	else {
+		$notterm2 = $_SESSION['notterm2'];
+	}
+
+	if(isset($_POST['notterm3'])) {
+		$notterm3 = $_POST['notterm3'];
+	}
+	else {
+		$notterm3 = $_SESSION['notterm3'];
+	}
+
+	if(isset($_POST['notterm4'])) {
+		$notterm4 = $_POST['notterm4'];
+	}
+	else {
+		$notterm4 = $_SESSION['notterm4'];
+	}
+
+	// Checkboxes
+	if(isset($_POST['check']['genotype'])){
+		$searchgenotype = 1;
+	}
+	else {
+		$searchgenotype = $_SESSION['searchgenotype'];
+	}
+
+	if(isset($_POST['check']['comment'])){
+		$searchcomment = 1;
+	}
+	else {
+		$searchcomment = $_SESSION['searchcomment'];
+	}
 }
 
 ?>
@@ -58,25 +149,18 @@ if(isset($_GET['minNum']) || isset($_GET['maxNum']) || isset($_GET['sign1'])){
 		// Set Genotype as default or remember the status of the checkboxes in the previous search: 
 		$helpmessage = "Select which field(s) to search in and type a keyword in at least one of the input boxes.<br>When you click 'Search', your keywords are remembered until you click 'Reset'.";
 
-		if(($_SESSION['genotype'] == 'genotype') && ($_SESSION['comment'] != 'comment')) {
-			$field1 = "Genotype";
-			$field2 = "Genotype";
+		if($searchgenotype && !$searchcomment) {
 			$check1 = 'checked="checked"';
 			$check2 = '';
 		}
-		elseif(($_SESSION['genotype'] == 'genotype') && ($_SESSION['comment'] == 'comment')) {
-			$field1 = "Genotype";
-			$field2 = "Comment";
+		elseif($searchgenotype && $searchcomment) {
 			$check1 = 'checked="checked"';
 			$check2 = 'checked="checked"';
 		}
-		elseif(($_SESSION['genotype'] != 'genotype') && ($_SESSION['comment'] == 'comment')) {
-			$field1 = "Comment";
-			$field2 = "Comment";
+		elseif(!$searchgenotype && $searchcomment) {
 			$check1 = '';
 			$check2 = 'checked="checked"';
-		}
-		else {
+		} else {
 			$check1 = 'checked="checked"';
 			$check2 = '';
 		}

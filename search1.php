@@ -2,34 +2,13 @@
 
 //Begin Search for keywords//
 if($_GET['type'] == 'word') {
-	$sign1 = $_SESSION['sign1'];
-
-	$term1 = $_POST['term1'];
-	$term2 = $_POST['term2'];
-	$term3 = $_POST['term3'];
-	$term4 = $_POST['term4'];
-
-	$notterm1 = $_POST['notterm1'];
-	$notterm2 = $_POST['notterm2'];
-	$notterm3 = $_POST['notterm3'];
-	$notterm4 = $_POST['notterm4'];
-
-	/* moved to actions.php
-	If all search boxes are empty, we do nothing, otherwise we assign the variables and do the search:
-	if(empty($_POST['term1']) && empty($_POST['term2']) && empty($_POST['term3']) && empty($_POST['term4']) && empty($_POST['notterm1']) && empty($_POST['notterm2']) && empty($_POST['notterm3']) && empty($_POST['notterm4']) && empty($_POST['sign1'])) {
-		header("Location: index.php?mode=list&error=error");
-	}*/
 
 	// If all but signature fields are empty
-	if(empty($_POST['term1']) && empty($_POST['term2']) && empty($_POST['term3']) && empty($_POST['term4']) && empty($_POST['notterm1']) && empty($_POST['notterm2']) && empty($_POST['notterm3']) && empty($_POST['notterm4']) && ($_POST['sign1'])) {
+	if(empty($term1) && empty($term2) && empty($term3) && empty($term4) && empty($notterm1) && empty($notterm2) && empty($notterm3) && empty($notterm4) && !empty($sign1)){
 		
 		// Build SQL statements, one limited and one that counts unlimited
 		$sql = "SELECT * FROM strains WHERE Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
 		$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Signature LIKE :sign1";
-
-		//TODO
-		//Replaced 3/3 by Per Enström
-		//$sql = "select * from strains where Signature like '%$sign1%' ORDER BY Strain ASC LIMIT $startval, $limit";
 
 		$message = "Your search for the above keyword in <strong>Signature</strong> resulted in ";
 	} else {
@@ -52,29 +31,23 @@ if($_GET['type'] == 'word') {
 			$term4 = '';
 		}
 
-		if(($searchfield['genotype'] == 'genotype') && ($searchfield['comment'] != 'comment')) {
+		if($searchgenotype && !$searchcomment) {
 			$field1 = "Genotype";
 			$field2 = "Genotype";
-			$check1 = 'checked="checked"';
-			$check2 = '';
 			$message = "Your search for the above keywords in <strong>Genotype</strong> resulted in ";
 		}
-		elseif(($searchfield['genotype'] == 'genotype') && ($searchfield['comment'] == 'comment')) {
+		elseif($searchgenotype && $searchcomment) {
 			$field1 = "Genotype";
 			$field2 = "Comment";
-			$check1 = 'checked="checked"';
-			$check2 = 'checked="checked"';
 			$message = "Your search for the above keywords in <strong>Genotype</strong> or <strong>Comment</strong> resulted in ";
 		}
-		elseif(($searchfield['genotype'] != 'genotype') && ($searchfield['comment'] == 'comment')) {
+		elseif(!$searchgenotype && $searchcomment) {
 			$field1 = "Comment";
 			$field2 = "Comment";
-			$check1 = '';
-			$check2 = 'checked="checked"';
 			$message = "Your search for the above keywords in <strong>Comment</strong> resulted in ";
 		} else {
-			$check1 = 'checked="checked"';
-			$check2 = '';
+			$field1 = "Genotype";
+			$field2 = "Genotype";
 		}
 
 		// Add the additional search parameters to the mysql query if more than one field is used:
@@ -231,40 +204,40 @@ if($sql){
 	// Prepare some variables for binding
 	$sign1param = '%' . $sign1 . '%';
 
-	$term1 = '%' . $term1 . '%';
-	$term2 = '%' . $term2 . '%';
-	$term3 = '%' . $term3 . '%';
-	$term4 = '%' . $term4 . '%';
-	$commentTerm1 = $term1;
-	$commentTerm2 = $term2;
-	$commentTerm3 = $term3;
-	$commentTerm4 = $term4;
+	$term1param = '%' . $term1 . '%';
+	$term2param = '%' . $term2 . '%';
+	$term3param = '%' . $term3 . '%';
+	$term4param = '%' . $term4 . '%';
+	$commentTerm1 = $term1param;
+	$commentTerm2 = $term2param;
+	$commentTerm3 = $term3param;
+	$commentTerm4 = $term4param;
 
-	$notterm1 = '%' . $notterm1 . '%';
-	$notterm2 = '%' . $notterm2 . '%';
-	$notterm3 = '%' . $notterm3 . '%';
-	$notterm4 = '%' . $notterm4 . '%';
-	$commentNotterm1 = $notterm1;
-	$commentNotterm2 = $notterm2;
-	$commentNotterm3 = $notterm3;
-	$commentNotterm4 = $notterm4;
+	$notterm1param = '%' . $notterm1 . '%';
+	$notterm2param = '%' . $notterm2 . '%';
+	$notterm3param = '%' . $notterm3 . '%';
+	$notterm4param = '%' . $notterm4 . '%';
+	$commentNotterm1 = $notterm1param;
+	$commentNotterm2 = $notterm2param;
+	$commentNotterm3 = $notterm3param;
+	$commentNotterm4 = $notterm4param;
 
 	// Bind parameters for total number of rows
 	$stmtTotal->bindParam(":sign1", $sign1param);
 
-	$stmtTotal->bindParam(":term1", $term1);
-	$stmtTotal->bindParam(":term2", $term2);
-	$stmtTotal->bindParam(":term3", $term3);
-	$stmtTotal->bindParam(":term4", $term4);
+	$stmtTotal->bindParam(":term1", $term1param);
+	$stmtTotal->bindParam(":term2", $term2param);
+	$stmtTotal->bindParam(":term3", $term3param);
+	$stmtTotal->bindParam(":term4", $term4param);
 	$stmtTotal->bindParam(":commentterm1", $commentTerm1, PDO::PARAM_STR);
 	$stmtTotal->bindParam(":commentterm2", $commentTerm2, PDO::PARAM_STR);
 	$stmtTotal->bindParam(":commentterm3", $commentTerm3, PDO::PARAM_STR);
 	$stmtTotal->bindParam(":commentterm4", $commentTerm4, PDO::PARAM_STR);
 
-	$stmtTotal->bindParam(":notterm1", $notterm1);
-	$stmtTotal->bindParam(":notterm2", $notterm2);
-	$stmtTotal->bindParam(":notterm3", $notterm3);
-	$stmtTotal->bindParam(":notterm4", $notterm4);
+	$stmtTotal->bindParam(":notterm1", $notterm1param);
+	$stmtTotal->bindParam(":notterm2", $notterm2param);
+	$stmtTotal->bindParam(":notterm3", $notterm3param);
+	$stmtTotal->bindParam(":notterm4", $notterm4param);
 	$stmtTotal->bindParam(":commentnotterm1", $commentNotterm1, PDO::PARAM_STR);
 	$stmtTotal->bindParam(":commentnotterm2", $commentNotterm2, PDO::PARAM_STR);
 	$stmtTotal->bindParam(":commentnotterm3", $commentNotterm3, PDO::PARAM_STR);
@@ -309,19 +282,19 @@ if($sql){
 	$stmt->bindParam(':startval', $startval, PDO::PARAM_INT);
 	$stmt->bindParam(':limitval', $limit, PDO::PARAM_INT);
 
-	$stmt->bindParam(":term1", $term1, PDO::PARAM_STR);
-	$stmt->bindParam(":term2", $term2, PDO::PARAM_STR);
-	$stmt->bindParam(":term3", $term3, PDO::PARAM_STR);
-	$stmt->bindParam(":term4", $term4, PDO::PARAM_STR);
+	$stmt->bindParam(":term1", $term1param, PDO::PARAM_STR);
+	$stmt->bindParam(":term2", $term2param, PDO::PARAM_STR);
+	$stmt->bindParam(":term3", $term3param, PDO::PARAM_STR);
+	$stmt->bindParam(":term4", $term4param, PDO::PARAM_STR);
 	$stmt->bindParam(":commentterm1", $commentTerm1, PDO::PARAM_STR);
 	$stmt->bindParam(":commentterm2", $commentTerm2, PDO::PARAM_STR);
 	$stmt->bindParam(":commentterm3", $commentTerm3, PDO::PARAM_STR);
 	$stmt->bindParam(":commentterm4", $commentTerm4, PDO::PARAM_STR);
 
-	$stmt->bindParam(":notterm1", $notterm1, PDO::PARAM_STR);
-	$stmt->bindParam(":notterm2", $notterm2, PDO::PARAM_STR);
-	$stmt->bindParam(":notterm3", $notterm3, PDO::PARAM_STR);
-	$stmt->bindParam(":notterm4", $notterm4, PDO::PARAM_STR);
+	$stmt->bindParam(":notterm1", $notterm1param, PDO::PARAM_STR);
+	$stmt->bindParam(":notterm2", $notterm2param, PDO::PARAM_STR);
+	$stmt->bindParam(":notterm3", $notterm3param, PDO::PARAM_STR);
+	$stmt->bindParam(":notterm4", $notterm4param, PDO::PARAM_STR);
 	$stmt->bindParam(":commentnotterm1", $commentNotterm1, PDO::PARAM_STR);
 	$stmt->bindParam(":commentnotterm2", $commentNotterm2, PDO::PARAM_STR);
 	$stmt->bindParam(":commentnotterm3", $commentNotterm3, PDO::PARAM_STR);
@@ -401,7 +374,26 @@ if($sql){
 
 				if($_GET['type'] == 'word'){
 					if ($n != $page){
-						echo ' <a href="javascript:pageforward(\'' . $n . '\');">' . $n . '</a> ';
+						$link  = "?mode=search&amp;type=word&amp;search=1";
+						$link .= "&amp;term1=" . $term1;
+						$link .= "&amp;term2=" . $term2;
+						$link .= "&amp;term3=" . $term3;
+						$link .= "&amp;term4=" . $term4;
+
+						$link .= "&amp;notterm1=" . $notterm1;
+						$link .= "&amp;notterm2=" . $notterm2;
+						$link .= "&amp;notterm3=" . $notterm3;
+						$link .= "&amp;notterm4=" . $notterm4;
+
+						$link .= "&amp;sign1=" . $sign1;
+
+						$link .= "&amp;searchcomment="  . $searchcomment;
+						$link .= "&amp;searchgenotype=" . $searchgenotype;
+
+						$link .= "&amp;limit=" . $limit;
+
+						$link .= "&amp;page=" . $n;
+						echo ' <a href="' . $link . '">' . $n . '</a> ';
 					} else {
 						echo " <span style='font-weight: bold; color: blue;'>" . $n . "</span> ";
 					} 
@@ -573,12 +565,23 @@ if($sql){
 
 			echo "<br>Page <span style='font-weight: bold'>" . $page . "</span> of <span style='font-weight: bold'>" . $pages . "</span>.";
 
+			// Print pagination links
 			for($n = 1; $n <= $pages; $n++) {
-				if ($n != $page){
-					echo ' <a href="javascript:pageforward(', "'", $n, "'", ');">', $n,'</a> ';
-				} else {
-					echo " <span style='font-weight: bold; color: blue;'>", $n, "</span> ";
-				} 
+
+				if($_GET['type'] == 'word'){
+					if ($n != $page){
+						echo ' <a href="' . $link . '">' . $n . '</a> ';
+					} else {
+						echo " <span style='font-weight: bold; color: blue;'>" . $n . "</span> ";
+					} 
+				}
+				elseif($_GET['type'] == 'number'){
+					if ($n != $page){
+						echo ' <a href="?mode=search&amp;type=number&amp;search=1&amp;minNum=' . $minNum . '&amp;maxNum=' . $maxNum . '&amp;sign1=' . $sign1 . '&amp;limit=' . $limit . '&amp;page=' . $n . '">' . $n . '</a> ';
+					} else {
+						echo " <span style='font-weight: bold; color: blue;'>" . $n . "</span> ";
+					} 
+				}
 			}
 		}
 
