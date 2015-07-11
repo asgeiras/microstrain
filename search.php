@@ -235,13 +235,13 @@ if($_GET['search'] == 1){
 				<td colspan="2">Between:</td>
 			</tr>
 	    	<tr>
-	    		<td colspan="2"><input type="text" name="minNum" maxlength="5" value="<?php echo $minNum; ?>" /></td>
+	    		<td colspan="2"><input type="text" name="minNum" maxlength="5" value="<?php echo $minNum; ?>"></td>
 	    	</tr>
 			<tr>
 				<td colspan="2">And:</td>
 			</tr>
 	    	<tr>
-	    		<td colspan="2"><input type="text" name="maxNum" maxlength="5" value="<?php echo $maxNum; ?>" /></td>
+	    		<td colspan="2"><input type="text" name="maxNum" maxlength="5" value="<?php echo $maxNum; ?>"></td>
 	    	</tr>
 			<tr>
 				<td>Limit to strains frozen by:</td>

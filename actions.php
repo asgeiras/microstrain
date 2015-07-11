@@ -141,4 +141,56 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'search'){
 
 }
 
+// DO EDIT
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'edit'){
+	// Find out how many records there are to update
+	$size = count($_POST['Genotype']);
+
+	// TODO: Transaction?
+	// Create SQL query
+	$sql  = "UPDATE strains ";
+		$sql .= "SET Genotype = :genotype, ";
+		$sql .= "Donor = :donor, ";
+		$sql .= "Recipient = :recipient, ";
+		$sql .= "Comment = :comment, ";
+		$sql .= "Signature = :signature, ";
+		$sql .= "Created = :created ";
+	$sql .= "WHERE Strain = :strain LIMIT 1";
+
+	// Prepare statement
+	$stmt = $dbh->prepare($sql);
+
+	// Bind parameters
+	$stmt->bindParam(":genotype", $genotype);
+	$stmt->bindParam(":donor", $donor);
+	$stmt->bindParam(":recipient", $recipient);
+	$stmt->bindParam(":comment", $comment);
+	$stmt->bindParam(":signature", $signature);
+	$stmt->bindParam(":created", $created);
+	$stmt->bindParam(":strain", $strain);
+
+	for($i = 0; $i < $size; $i++){
+
+		// Define variables
+		$genotype  = str_replace(array("\r", "\r\n", "\n"), " ", $_POST['Genotype'][$i]);
+		$donor     = $_POST['Donor'][$i];
+		$recipient = $_POST['Recipient'][$i];
+		$comment   = str_replace(array("\r", "\r\n", "\n"), " ", $_POST['Comment'][$i]);
+		$signature = $_POST['Signature'][$i];
+		$strain    = $_POST['Strain'][$i];
+
+		// If the checkbox to update created is checked, use that value, otherwise use old value
+		if(empty($_POST['Created'][$i])) {
+			$created = $_POST['CreatedDate'][$i];
+		} else {
+			$created = $_POST['Created'][$i];
+		}
+
+		$selected[$i] = $strain;
+
+		// Execute statement
+		$stmt->execute();
+	}
+}
+
 ?>

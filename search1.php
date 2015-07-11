@@ -218,8 +218,7 @@ if ($_GET['mode'] == 'add3') {
 if ($_GET['mode'] == 'edit2') {
 	$page = 1;
 	$limit = 100;
-	$edited = $_POST['selected'];
-	$list = $edited;
+	$list = $selected;
 
 	// Prepare parameters for strains in list
 	$listInQuery = array();
