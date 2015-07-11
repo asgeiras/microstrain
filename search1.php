@@ -158,40 +158,80 @@ if($_GET['type'] == 'number') {
 
 //Show Donor/ recipient from clickable link in table:
 if ($_GET['mode'] == 'myNum') {
+	$page = 1;
+	$limit = 100;
 	$myNum = $_GET['myNum'];
-	$sql = "SELECT * FROM strains WHERE Strain = ':myNum'";
+	$sql  = "SELECT * FROM strains WHERE Strain = :myNum";
+	$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain = :myNum";
 }
 //End Show Donor/ recipient from clickable link in table
 
 //Begin List selected strains
 if ($_GET['mode'] == 'myList') {
+	$page = 1;
+	$limit = 100;
 	$selected = $_POST['selected'];
-	$list = implode(", ",$selected);
-	$message = "You selected the following ";
+	$list = $selected;
 
-	if($list == '') {
+
+	if(count($selected) == 0) {
 		echo "You did not select any strain<br>";
 	} else {
-		$sql = "SELECT * FROM strains WHERE Strain IN (:list)";
+		// Prepare parameters for strains in list
+		$listInQuery = array();
+		for($i = 1; $i <= count($list); $i++){
+			$listInQuery[$i] = ":list_" . $i;
+		}
+		$listInQuery = implode(", ", $listInQuery);
+		$numberOfListParameters = count($list);
+
+		$message = "You selected the following ";
+
+		$sql  = "SELECT * FROM strains WHERE Strain IN (" . $listInQuery . ")";
+		$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain IN (" . $listInQuery . ")";
 	}
 }
 //End List selected strains
 
 //Begin List inserted strains
 if ($_GET['mode'] == 'add3') {
+	$page = 1;
+	$limit = 100;
 	$inserted = $_POST['inserted'];
-	$list = implode(", ",$inserted);
+	$list = $inserted;
+
+	// Prepare parameters for strains in list
+	$listInQuery = array();
+	for($i = 1; $i <= count($list); $i++){
+		$listInQuery[$i] = ":list_" . $i;
+	}
+	$listInQuery = implode(", ", $listInQuery);
+	$numberOfListParameters = count($list);
+
 	$message = "You successfully saved the following "; 
-	$sql = "SELECT * FROM strains WHERE Strain IN (:list)";
+	$sql  = "SELECT * FROM strains WHERE Strain IN (" . $listInQuery . ")";
+	$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain IN (" . $listInQuery . ")";
 }
 //End List inserted strains
 
 //Begin List edited strains
 if ($_GET['mode'] == 'edit2') {
+	$page = 1;
+	$limit = 100;
 	$edited = $_POST['selected'];
-	$list = implode(", ",$edited);
+	$list = $edited;
+
+	// Prepare parameters for strains in list
+	$listInQuery = array();
+	for($i = 1; $i <= count($list); $i++){
+		$listInQuery[$i] = ":list_" . $i;
+	}
+	$listInQuery = implode(", ", $listInQuery);
+	$numberOfListParameters = count($list);
+
 	$message = "Please check the following ";
-	$sql = "SELECT * FROM strains WHERE Strain IN (:list)";
+	$sql  = "SELECT * FROM strains WHERE Strain IN (" . $listInQuery . ")";
+	$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain IN (" . $listInQuery . ")";
 }
 //End List inserted strains
 
@@ -248,7 +288,9 @@ if($sql){
 
 	$stmtTotal->bindParam(":myNum", $myNum);
 
-	$stmtTotal->bindParam(":list", $list);
+	for($i = 1; $i <= $numberOfListParameters; $i++){
+		$stmtTotal->bindParam(":list_" . $i, $list[$i-1]);
+	}
 
 	//Exectue total statement
 	$stmtTotal->execute();
@@ -271,10 +313,12 @@ if($sql){
 		$startval = 0;
 	}
 
+	// Troubleshooting
+	/*
 	echo "<p>Pages: $pages</p>";
 	echo "<p>Page: $page</p>";
 	echo "<p>Startval: $startval</p>";
-	echo "<p>Limit: $limit</p>";
+	echo "<p>Limit: $limit</p>";*/
 
 	// Bind parameters for limited rows
 	$stmt->bindParam(':sign1', $sign1param);
@@ -305,7 +349,9 @@ if($sql){
 
 	$stmt->bindParam(":myNum", $myNum);
 
-	$stmt->bindParam(":list", $list);
+	for($i = 1; $i <= $numberOfListParameters; $i++){
+		$stmt->bindParam(":list_" . $i, $list[$i-1]);
+	}
 
 	// Execute statement
 	$stmt->execute();
@@ -339,11 +385,14 @@ if($sql){
 	echo "<br>";
 	echo "maxNum: $maxNum";
 	echo "<br>";
+	echo "numberOfListParameters: $numberOfListParameters";
+	echo "<br>";
 	echo "field2: $field2";
 	echo "<br>";
 	echo "total_records: $total_records<br>";
 	echo "total_records session: " . $_SESSION['total_records'] . "<br>";
 	//print("result:<pre>".print_r($result, true)."</pre>");
+	print("list:<pre>".print_r($list, true)."</pre>");
 
 	$_SESSION['total_records'] = $total_records;
 
@@ -452,49 +501,48 @@ if($sql){
 
 					// Display every match to the search word with colored text:
 					// Genotype:
-					if(($_SESSION['genotype'] == 'genotype')){
-
-						if($_SESSION['term1'] != '') {
-							$genotype = preg_replace('/' . preg_quote($_SESSION['term1'], '/') . '/i', "¢$0¦", $genotype);
+					if($searchgenotype){
+						if($term1 != '') {
+							$genotype = preg_replace('/' . preg_quote($term1, '/') . '/i', "¢$0¦", $genotype);
 						}
 
-						if($_SESSION['term2'] != '') {
-							$genotype = preg_replace('/'.preg_quote($_SESSION['term2'], '/').'/i', "¢$0¦", $genotype);
+						if($term2 != '') {
+							$genotype = preg_replace('/' . preg_quote($term2, '/') . '/i', "¢$0¦", $genotype);
 						}
 
-						if($_SESSION['term3'] != '') {
-							$genotype = preg_replace('/'.preg_quote($_SESSION['term3'], '/').'/i', "¢$0¦", $genotype);
+						if($term3 != '') {
+							$genotype = preg_replace('/' . preg_quote($term3, '/') . '/i', "¢$0¦", $genotype);
 						}
 
-						if($_SESSION['term4'] != '') {
-							$genotype = preg_replace('/'.preg_quote($_SESSION['term4'], '/').'/i', "¢$0¦", $genotype);
+						if($term4 != '') {
+							$genotype = preg_replace('/' . preg_quote($term4, '/') . '/i', "¢$0¦", $genotype);
 						}
 
-						$genotype = preg_replace('/'.preg_quote('¢', '/').'/i', "<span style='color: blue; font-weight: bold;'>", $genotype);
-						$genotype = preg_replace('/'.preg_quote('¦', '/').'/i', "</span>", $genotype);
+						$genotype = preg_replace('/' . preg_quote('¢', '/') . '/i', "<span style='color: blue; font-weight: bold;'>", $genotype);
+						$genotype = preg_replace('/' . preg_quote('¦', '/') . '/i', "</span>", $genotype);
 					}
 
 					// Comment:
-					if(($_SESSION['comment'] == 'comment')){
+					if($searchcomment){
 
-						if($_SESSION['term1'] != '') {
-							$comment = preg_replace('/'.preg_quote($_SESSION['term1'], '/').'/i', "¢$0¦", $comment);
+						if($term1 != '') {
+							$comment = preg_replace('/' . preg_quote($term1, '/') . '/i', "¢$0¦", $comment);
 						}
 
-						if($_SESSION['term2'] != '') {
-							$comment = preg_replace('/'.preg_quote($_SESSION['term2'], '/').'/i', "¢$0¦", $comment);
+						if($term2 != '') {
+							$comment = preg_replace('/' . preg_quote($term2, '/') . '/i', "¢$0¦", $comment);
 						}
 
-						if($_SESSION['term3'] != '') {
-							$comment = preg_replace('/'.preg_quote($_SESSION['term3'], '/').'/i', "¢$0¦", $comment);
+						if($term3 != '') {
+							$comment = preg_replace('/' . preg_quote($term3, '/') . '/i', "¢$0¦", $comment);
 						}
 
-						if($_SESSION['term4'] != '') {
-							$comment = preg_replace('/'.preg_quote($_SESSION['term4'], '/').'/i', "¢$0¦", $comment);
+						if($term4 != '') {
+							$comment = preg_replace('/' . preg_quote($term4, '/') . '/i', "¢$0¦", $comment);
 						}
 
-						$comment = preg_replace('/'.preg_quote('¢', '/').'/i', "<span style='color: blue; font-weight: bold;'>", $comment);
-						$comment = preg_replace('/'.preg_quote('¦', '/').'/i', "</span>", $comment);
+						$comment = preg_replace('/' . preg_quote('¢', '/') . '/i', "<span style='color: blue; font-weight: bold;'>", $comment);
+						$comment = preg_replace('/' . preg_quote('¦', '/') . '/i', "</span>", $comment);
 					}
 
 					echo "<tr>";

@@ -180,20 +180,20 @@ if($_GET['search'] == 1){
 				<td colspan="4">Include:</td>
 			</tr>
 			<tr>
-				<td><input type="text" title="Tip: use % as wildcard" name="term1" value="<?php echo $_SESSION['term1']; ?>"></td>
-				<td><input type="text" title="Tip: use % as wildcard" name="term2" value="<?php echo $_SESSION['term2']; ?>"></td>
-				<td><input type="text" title="Tip: use % as wildcard" name="term3" value="<?php echo $_SESSION['term3']; ?>"></td>
-				<td><input type="text" title="Tip: use % as wildcard" name="term4" value="<?php echo $_SESSION['term4']; ?>"></td>
+				<td><input type="text" title="Tip: use % as wildcard" name="term1" value="<?php echo $term1; ?>"></td>
+				<td><input type="text" title="Tip: use % as wildcard" name="term2" value="<?php echo $term2; ?>"></td>
+				<td><input type="text" title="Tip: use % as wildcard" name="term3" value="<?php echo $term3; ?>"></td>
+				<td><input type="text" title="Tip: use % as wildcard" name="term4" value="<?php echo $term4; ?>"></td>
 			</tr>
 
 			<tr>
 				<td colspan="4">Exclude:</td>
 			</tr>
 			<tr>
-				<td><input type="text" title="Tip: use % as wildcard" name="notterm1" value="<?php echo $_SESSION['notterm1']; ?>"></td>
-				<td><input type="text" title="Tip: use % as wildcard" name="notterm2" value="<?php echo $_SESSION['notterm2']; ?>"></td>
-				<td><input type="text" title="Tip: use % as wildcard" name="notterm3" value="<?php echo $_SESSION['notterm3']; ?>"></td>
-				<td><input type="text" title="Tip: use % as wildcard" name="notterm4" value="<?php echo $_SESSION['notterm4']; ?>"></td>
+				<td><input type="text" title="Tip: use % as wildcard" name="notterm1" value="<?php echo $notterm1; ?>"></td>
+				<td><input type="text" title="Tip: use % as wildcard" name="notterm2" value="<?php echo $notterm2; ?>"></td>
+				<td><input type="text" title="Tip: use % as wildcard" name="notterm3" value="<?php echo $notterm3; ?>"></td>
+				<td><input type="text" title="Tip: use % as wildcard" name="notterm4" value="<?php echo $notterm4; ?>"></td>
 			</tr>
 			<tr>
 				<td colspan="2">Limit to strains frozen by:</td>
@@ -201,7 +201,7 @@ if($_GET['search'] == 1){
 			</tr>
 			<tr>
 				<td colspan="2">
-					<input type="text" name="sign1" value="<?php echo $_SESSION['sign1']; ?>">
+					<input type="text" name="sign1" value="<?php echo $sign1; ?>">
 				</td>
 				<td colspan="2">
 					<input type="text" name="limit" size=4 maxlength="5" value="<?php echo $limit; ?>">

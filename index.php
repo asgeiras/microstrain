@@ -112,7 +112,6 @@ print("session:<pre>".print_r($_SESSION, true)."</pre>");
 							include("search1.php");
 						}
 						elseif (($value == 'search') && ($_POST['isPosted'] != 'TRUE')) {
-							echo "2";
 							include("search.php");
 						}
 						elseif ($value == 'myNum') {
