@@ -143,54 +143,220 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'search'){
 
 // DO EDIT
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'edit'){
-	// Find out how many records there are to update
-	$size = count($_POST['Genotype']);
 
-	// TODO: Transaction?
-	// Create SQL query
-	$sql  = "UPDATE strains ";
-		$sql .= "SET Genotype = :genotype, ";
-		$sql .= "Donor = :donor, ";
-		$sql .= "Recipient = :recipient, ";
-		$sql .= "Comment = :comment, ";
-		$sql .= "Signature = :signature, ";
-		$sql .= "Created = :created ";
-	$sql .= "WHERE Strain = :strain LIMIT 1";
+	// Check user rights
+	if($_SESSION['Usertype'] == 'Superuser') {
+		// Find out how many records there are to update
+		$size = count($_POST['Genotype']);
 
-	// Prepare statement
-	$stmt = $dbh->prepare($sql);
+		// TODO: Transaction?
+		// Create SQL query
+		$sql  = "UPDATE strains ";
+			$sql .= "SET Genotype = :genotype, ";
+			$sql .= "Donor = :donor, ";
+			$sql .= "Recipient = :recipient, ";
+			$sql .= "Comment = :comment, ";
+			$sql .= "Signature = :signature, ";
+			$sql .= "Created = :created ";
+		$sql .= "WHERE Strain = :strain LIMIT 1";
 
-	// Bind parameters
-	$stmt->bindParam(":genotype", $genotype);
-	$stmt->bindParam(":donor", $donor);
-	$stmt->bindParam(":recipient", $recipient);
-	$stmt->bindParam(":comment", $comment);
-	$stmt->bindParam(":signature", $signature);
-	$stmt->bindParam(":created", $created);
-	$stmt->bindParam(":strain", $strain);
+		// Prepare statement
+		$stmt = $dbh->prepare($sql);
 
-	for($i = 0; $i < $size; $i++){
+		// Bind parameters
+		$stmt->bindParam(":genotype", $genotype);
+		$stmt->bindParam(":donor", $donor);
+		$stmt->bindParam(":recipient", $recipient);
+		$stmt->bindParam(":comment", $comment);
+		$stmt->bindParam(":signature", $signature);
+		$stmt->bindParam(":created", $created);
+		$stmt->bindParam(":strain", $strain);
 
-		// Define variables
-		$genotype  = str_replace(array("\r", "\r\n", "\n"), " ", $_POST['Genotype'][$i]);
-		$donor     = $_POST['Donor'][$i];
-		$recipient = $_POST['Recipient'][$i];
-		$comment   = str_replace(array("\r", "\r\n", "\n"), " ", $_POST['Comment'][$i]);
-		$signature = $_POST['Signature'][$i];
-		$strain    = $_POST['Strain'][$i];
+		for($i = 0; $i < $size; $i++){
 
-		// If the checkbox to update created is checked, use that value, otherwise use old value
-		if(empty($_POST['Created'][$i])) {
-			$created = $_POST['CreatedDate'][$i];
+			// Define variables
+			$genotype  = str_replace(array("\r", "\r\n", "\n"), " ", $_POST['Genotype'][$i]);
+			$donor     = $_POST['Donor'][$i];
+			$recipient = $_POST['Recipient'][$i];
+			$comment   = str_replace(array("\r", "\r\n", "\n"), " ", $_POST['Comment'][$i]);
+			$signature = $_POST['Signature'][$i];
+			$strain    = $_POST['Strain'][$i];
+
+			// If the checkbox to update created is checked, use that value, otherwise use old value
+			if(empty($_POST['Created'][$i])) {
+				$created = $_POST['CreatedDate'][$i];
+			} else {
+				$created = $_POST['Created'][$i];
+			}
+
+			$selected[$i] = $strain;
+
+			// Execute statement
+			$stmt->execute();
+		}
+	}
+}
+
+// DO ADD
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'add' && $_POST['submit']){
+
+	//TODO: Transactions?
+
+	// Check user rights
+	if($_SESSION['Usertype'] == 'Superuser') {
+		$test = array();
+		$num_lines = count($_POST["txtGenotype"]);
+
+		$testresult = 0;
+
+		if($num_lines == 1) {
+			$plural = '';
 		} else {
-			$created = $_POST['Created'][$i];
+			$plural = 's';
 		}
 
-		$selected[$i] = $strain;
+		$_SESSION["Line"] = $num_lines;
 
-		// Execute statement
-		$stmt->execute();
+		unset($_SESSION['saveFail']);
+
+		// Save sessions and validate
+		for($i = 1; $i <= $num_lines; $i++) {
+			$_SESSION["txtGenotype"][$i] = $_POST["txtGenotype"][$i];
+			$_SESSION["txtDonor"][$i] = $_POST["txtDonor"][$i];
+			$_SESSION["txtRecipient"][$i] = $_POST["txtRecipient"][$i];
+			$_SESSION["txtComment"][$i] = $_POST["txtComment"][$i];
+
+			// Validate fields
+			if(!empty($_POST["txtGenotype"][$i])){
+				$validate['Genotype'] = 1;
+			} else {
+				$validate['Genotype'] = 0;
+			}
+
+			// TODO: check if donor/recipient is a valid strain
+			if((!empty($_POST["txtDonor"][$i]) && is_numeric($_POST["txtDonor"][$i])) || empty($_POST["txtDonor"][$i])){
+				$validate['Donor'] = 1;
+			} else {
+				$validate['Donor'] = 0;
+			}
+
+			if((!empty($_POST["txtRecipient"][$i]) && is_numeric($_POST["txtRecipient"][$i])) || empty($_POST["txtRecipient"][$i])){
+				$validate['Recipient'] = 1;
+			} else {
+				$validate['Recipient'] = 0;
+			}
+
+			// If all fields are empty
+			if(empty($_POST["txtDonor"][$i]) && empty($_POST['txtRecipient'][$i]) && empty($_POST['txtComment'][$i])){
+				$emptyRow = TRUE;
+			} else {
+				$emptyRow = FALSE;
+			}
+
+			// If all validates pass
+			if(array_sum($validate) == count($validate)){
+				$test[$i] = 'PASS';
+			} else {
+				// If ALL fields are empty, set test to empty
+				if($emptyRow){
+					$test[$i] = 'EMPTY';
+				} else {
+					$test[$i] = 'FAIL';
+					$_SESSION['saveFail'][$i] = $validate;
+				}
+			}
+		}
+
+		if (count($_SESSION['saveFail']) > 0) {
+			$goAhead = FALSE;;
+		} else {
+			$goAhead = TRUE;
+			unset($_SESSION['saveFail']);
+		}
+
+		if($goAhead) {
+			// Create SQL query
+			$sql = "INSERT INTO strains (Genotype,Donor,Recipient,Comment,Signature) VALUES (:genotype, :donor, :recipient, :comment, :signature)";
+
+			// Prepare statement
+			$stmt = $dbh->prepare($sql);
+
+			unset($inserted);
+
+			// Loop through all rows to be added
+			for($i = 1; $i <= $num_lines; $i++) {
+				if($test[$i] != "EMPTY"){
+					// Prepare variables
+					$genotype = str_replace(array("\r", "\r\n", "\n"), " ", $_POST["txtGenotype"][$i]);
+					$donor = $_POST["txtDonor"][$i];
+					$recipient = $_POST["txtRecipient"][$i];
+					$comment = str_replace(array("\r", "\r\n", "\n"), " ", $_POST["txtComment"][$i]);
+					$signature = $_POST["txtSignature"];
+
+					// Bind parameters
+					$stmt->bindParam(":genotype", $genotype);
+					$stmt->bindParam(":donor", $donor);
+					$stmt->bindParam(":recipient", $recipient);
+					$stmt->bindParam(":comment", $comment);
+					$stmt->bindParam(":signature", $signature);
+
+					// Execute statement
+					$stmt->execute();
+
+					// Save ID of last inserted row
+					$inserted[] = $dbh->lastInsertId();
+					
+					// Clear the session
+					unset($_SESSION["txtGenotype"][$i]);
+					unset($_SESSION["txtDonor"][$i]);
+					unset($_SESSION["txtRecipient"][$i]);
+					unset($_SESSION["txtComment"][$i]);
+				}
+			}
+
+			unset($_SESSION["Line"]);
+		}
+		else{
+			header("Location: index.php?mode=add&Line=" . $_SESSION["Line"]);
+		}
 	}
+}
+
+// DO UPDATE LINES
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'add' && $_POST['update_lines']){
+	$num_lines = count($_POST["txtGenotype"]);	
+
+	unset($_SESSION["txtGenotype"]);
+	unset($_SESSION["txtDonor"]);
+	unset($_SESSION["txtRecipient"]);
+	unset($_SESSION["txtComment"]);
+
+	// Save sessions
+	for($i = 1; $i <= $num_lines; $i++) {
+		$_SESSION["txtGenotype"][$i] = $_POST["txtGenotype"][$i];
+		$_SESSION["txtDonor"][$i] = $_POST["txtDonor"][$i];
+		$_SESSION["txtRecipient"][$i] = $_POST["txtRecipient"][$i];
+		$_SESSION["txtComment"][$i] = $_POST["txtComment"][$i];
+	}
+
+	$newLines = $_POST['menu1'];
+	$_SESSION['Line'] = $newLines;
+
+	header("Location: index.php?mode=add&Line=" . $newLines);
+}
+
+// DO RESET INPUT
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'add' && $_POST['reset']){
+
+	unset($_SESSION["txtGenotype"]);
+	unset($_SESSION["txtDonor"]);
+	unset($_SESSION["txtRecipient"]);
+	unset($_SESSION["txtComment"]);
+	$_SESSION['Line'] = 1;
+
+	unset($_SESSION['saveFail']);
+
+	header("Location: index.php?mode=add&Line=1");
 }
 
 ?>

@@ -197,7 +197,6 @@ if ($_GET['mode'] == 'myList') {
 if ($_GET['mode'] == 'add3') {
 	$page = 1;
 	$limit = 100;
-	$inserted = $_POST['inserted'];
 	$list = $inserted;
 
 	// Prepare parameters for strains in list

@@ -129,14 +129,8 @@ print("session:<pre>".print_r($_SESSION, true)."</pre>");
 						elseif ($value == 'add') {
 							include("insert.php");
 						}
-						elseif ($value == 'add2') {
-							include("insert1.php");
-						}
 						elseif ($value == 'add3') {
 							include("search1.php");
-						}
-						elseif ($value == 'edit') {
-							include("edit1.php");
 						}
 						elseif ($value == 'edit2') {
 							include("search1.php");

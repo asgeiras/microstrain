@@ -75,6 +75,7 @@ table.sample {
 	background-color: rgb(255, 250, 250);
         /*table-layout: width: 100px;*/
 }
+
 table.sample th {
 
 	border-width: thin;
@@ -84,6 +85,7 @@ table.sample th {
 	background-color: white;
 	-moz-border-radius: ;
 }
+
 table.sample td {
 
 	border-width: thin;
@@ -92,6 +94,27 @@ table.sample td {
 	border-color: gray;
 	background-color: white;
 	-moz-border-radius: ;
+}
+
+table.insert {
+	border: 0px solid black;
+	border-collapse: collapse;
+}
+
+table.insert th {
+	text-align: left;
+}
+
+table.insert td {
+	padding: 2px 0;
+}
+
+table.insert tr {
+	border-bottom: 0px solid black;
+}
+
+table.insert tr:nth-child(even) {
+    /*background-color: #CCC;*/
 }
 
 
@@ -287,17 +310,25 @@ ul#navitab li a.current {
 	margin-left: 52%;
 }
 
-.right{
+.right {
 	text-align: right;
 }
 
-.block{
+.block {
 	background: #eee url(images/corner.gif) no-repeat top right;
 	padding: 15px;
 	border-bottom: 1px solid #ccc;
 	border-left: 1px solid #ccc;
 }
 
-.hide{
+.hide {
 	display: none;
+}
+
+input.validation-fail, textarea.validation-fail {
+	border: 1px solid red;
+}
+
+p.validation-fail {
+	color: red;
 }
