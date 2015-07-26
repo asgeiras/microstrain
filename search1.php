@@ -468,9 +468,8 @@ if($sql){
 				echo "<th>Created</th>";
 				echo "<th>";
 					echo "Select";
-					echo "<input type='hidden' name='toggle' value='set' />";
-					echo "<input type='button' name='CheckAll' value='All' onClick='checkAll(document.selectRow)'>";
-					echo "<input type='button' name='UnCheckAll' value='None' onClick='uncheckAll(document.selectRow)'>";
+					echo "<button class='display-none' id='check-all'>All</button>";
+					echo "<button class='display-none' id='check-none'>None</button>";
 				echo "</th>";
 			echo "</tr>";
 			// WORK DONE TO HERE

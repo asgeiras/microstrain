@@ -66,13 +66,12 @@ if($_SESSION['Usertype'] == 'Superuser') {
 				echo "<input type='submit' title='Save the changes' name='save' value='save'>";
 				
 				$strainIndex = 0;
+
 				// Loop through all strains
 				foreach ($result as $row) {
 					$genotype = htmlspecialchars($row['Genotype']);
 					$comment = htmlspecialchars($row['Comment']);
 
-					// TODO: Check inputs here
-					// TODO: Where does $i come from?
 					echo "<tr>";
 						echo "<td>";    
 							echo 'DA' . $row['Strain'];
@@ -84,24 +83,23 @@ if($_SESSION['Usertype'] == 'Superuser') {
 							echo "<textarea type='text' rows=3 cols=40 name='Genotype[" . $strainIndex . "]'>" . $row['Genotype'] . "</textarea>\n";
 						echo "</td>";
 
-						// TODO: What the hell does the JS do?
 						echo "<td>";
 							echo "Donor:<br>";
 							if ($row['Donor'] == "0") {
 								echo "<span style='color: grey'>(Not entered)</span><br>";
-								echo "DA<input type='text' size=4 name='Donor[" . $strainIndex . "]' value='' onKeyPress='return number(event)'>\n<br><br>";
+								echo "DA<input type='text' size=5 name='Donor[" . $strainIndex . "]' value=''>\n<br><br>";
 							} else {
 								echo "<a href=index.php?mode=myNum&myNum=" . $row['Donor'] . " title='View DA" . $row['Donor'] . " in a new tab'>DA" . $row['Donor'] . "</a><br>";
-								echo "DA<input type='text' size=4 name='Donor[" . $strainIndex . "]' value='" . $row['Donor'] . "' onKeyPress='return number(event)'><br><br>\n";
+								echo "DA<input type='text' size=5 name='Donor[" . $strainIndex . "]' value='" . $row['Donor'] . "'><br><br>\n";
 							}
 
 							echo "Recipient:<br>";
 							if ($row['Recipient'] == "0") {
 								echo "";
-								echo "DA<input type='text' size=4 name='Recipient[" . $strainIndex . "]' value='' onKeyPress='return number(event)'>\n";
+								echo "DA<input type='text' size=5 name='Recipient[" . $strainIndex . "]' value=''>\n";
 							} else {
 								echo "<a href=index.php?mode=myNum&myNum=" . $row['Recipient'] . " title='View DA" . $row['Recipient'] . " in a new tab'>DA" . $row['Recipient'] . "</a><br>";
-								echo "DA<input type='text' size=4 name='Recipient[" . $strainIndex . "]' value='" . $row['Recipient'] . "' onKeyPress='return number(event)'>\n";
+								echo "DA<input type='text' size=5 name='Recipient[" . $strainIndex . "]' value='" . $row['Recipient'] . "'>\n";
 							}
 						echo "</td>";
 

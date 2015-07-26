@@ -1,17 +1,11 @@
 <?php
 
-// *****************************
-// ** Written by: Per Enström **
-// ******* February 2015 *******
-
 /*
 $dbuser = 'root';
 $dbpassword = '1Lovestrains';
 $dbname = 'strains';
 $hostname = 'localhost';
 $port = 8889;
-
-$today = date ('Y-m-d H:i:s');
 */
 
 
@@ -21,13 +15,10 @@ $dbname = 'strains';
 $hostname = 'localhost';
 $port = 8889;
 
-$today = date ('Y-m-d H:i:s');
-
 // Open database connection
 try {
-	$dbh = new PDO("mysql:host=$hostname;dbname=$dbname;charset=utf8mb4", $dbuser, $dbpassword);
+	$dbh = new PDO("mysql:host=$hostname;port=$port;dbname=$dbname;charset=utf8mb4", $dbuser, $dbpassword);
 	$dbh->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-	//echo "connected to database";
 }
 catch(PDOException $e) {
 	echo $e->getMessage();

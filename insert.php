@@ -51,7 +51,7 @@ if($_SESSION['Usertype'] == 'Superuser') {
 				unset($failClass);
 
 				// Specify classes for failed fields
-				if(array_key_exists($i, $failedRows)){
+				if(isset($failedRows) && array_key_exists($i, $failedRows)){
 					if(!$failedRows[$i]['Genotype']){
 						$failClass['genotype'] = "validation-fail";
 					}

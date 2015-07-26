@@ -20,7 +20,7 @@ include("functions.php");
 include("actions.php");
 
 // Troubleshooting
-print("session:<pre>".print_r($_SESSION, true)."</pre>");
+print("session:<pre class='noPrint'>".print_r($_SESSION, true)."</pre>");
 
 ?>
 
@@ -89,63 +89,50 @@ print("session:<pre>".print_r($_SESSION, true)."</pre>");
 			<div id="main">
 
 				<?php	  
+				$value = $_GET['mode']; 
 
-				//********************************************//
-				//      Jocke's magic code starts here:       //
-				//********************************************//
-				/*
-				echo $_SESSION['noJs'];
-
-				if ($_GET['error'] == 'error') {
-					echo "<span style='color: red'><strong>You need to provide at least one keyword!</strong></span><br>";
-				} else { */
-
-					$value = $_GET['mode']; 
-
-					if ($_SESSION['login'] != '1') {
-						include("login.php");
-					} else {
-						if (($value == 'search') && $_GET['error'] == 'error') {
-							echo "<span style='color: red'><strong>You need to provide at least one keyword!</strong></span><br>";
-							include("search.php");
-						}
-						elseif (($value == 'search') && ($_POST['isPosted'] == 'TRUE' || $_GET['search'] == "1")) {
-							include("search.php");
-							include("search1.php");
-						}
-						elseif (($value == 'search') && ($_POST['isPosted'] != 'TRUE')) {
-							include("search.php");
-						}
-						elseif ($value == 'myNum') {
-							include("search1.php");
-						}
-						elseif (($value == 'myList') && ($_POST['show'])) {
-							include("search1.php");
-						}
-						elseif (($value == 'myList') && ($_POST['edit'])) {
-							include("edit.php");
-						}
-						elseif (($value == 'myList') && ($_POST['print'])) {
-							include("print.php");
-						}
-						elseif ($value == 'add') {
-							include("insert.php");
-						}
-						elseif ($value == 'add3') {
-							include("search1.php");
-						}
-						elseif ($value == 'edit2') {
-							include("search1.php");
-						}
-						elseif (($value == 'addUser') && ($_GET['save'] != 'success')) {
-							include("signup.php");
-						}
-						else {
-							include("search.php");
-						}
+				if ($_SESSION['login'] != '1') {
+					include("login.php");
+				} else {
+					if (($value == 'search') && $_GET['error'] == 'error') {
+						echo "<span style='color: red'><strong>You need to provide at least one keyword!</strong></span><br>";
+						include("search.php");
 					}
-				//}
-
+					elseif (($value == 'search') && ($_POST['isPosted'] == 'TRUE' || $_GET['search'] == "1")) {
+						include("search.php");
+						include("search1.php");
+					}
+					elseif (($value == 'search') && ($_POST['isPosted'] != 'TRUE')) {
+						include("search.php");
+					}
+					elseif ($value == 'myNum') {
+						include("search1.php");
+					}
+					elseif (($value == 'myList') && ($_POST['show'])) {
+						include("search1.php");
+					}
+					elseif (($value == 'myList') && ($_POST['edit'])) {
+						include("edit.php");
+					}
+					elseif (($value == 'myList') && ($_POST['print'])) {
+						include("print.php");
+					}
+					elseif ($value == 'add') {
+						include("insert.php");
+					}
+					elseif ($value == 'add3') {
+						include("search1.php");
+					}
+					elseif ($value == 'edit2') {
+						include("search1.php");
+					}
+					elseif (($value == 'addUser') && ($_GET['save'] != 'success')) {
+						include("signup.php");
+					}
+					else {
+						include("search.php");
+					}
+				}
 				?>
 
 				<div class='noPrint'>
