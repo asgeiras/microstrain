@@ -67,10 +67,10 @@ if($sql){
 				echo "<thead>";
 					echo "<tr>";
 						echo "<th>Strain</th>";
-						echo "<th width='300px'>Genotype</th>";
+						echo "<th style='width:300px'>Genotype</th>";
 						echo "<th>Recipient</th>";
 						echo "<th>Donor</th>";
-						echo "<th width='300px'>Comment</th>";
+						echo "<th style='width:300px'>Comment</th>";
 						echo "<th>Signature</th>";
 					echo "</tr>";
 				echo "</thead>";

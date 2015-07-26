@@ -84,11 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'search'){
 			if(empty($_POST['term1']) && 
 				empty($_POST['term2']) && 
 				empty($_POST['term3']) && 
-				empty($_POST['term4']) && 
-				empty($_POST['notterm1']) && 
-				empty($_POST['notterm2']) && 
-				empty($_POST['notterm3']) && 
-				empty($_POST['notterm4']) && 
+				empty($_POST['term4']) &&
 				empty($_POST['sign1'])
 			) {
 				header("Location: index.php?mode=search&error=error");
@@ -103,40 +99,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'search'){
 	}
 
 	// The reset button clears all submitted variables from all forms
-	if($_POST['reset'] == 'Reset'){
-		//if($_GET['reset'] == 'TRUE') {
-			//Search:
-			$_SESSION['total_records'] = '';
-			$_SESSION['word'] = '';
-			$_SESSION['num'] = '';
-			$_SESSION['check'] = '';
-			$_SESSION['genotype'] = '';
-			$_SESSION['comment'] = '';
-			$_SESSION['term1'] = '';
-			$_SESSION['term1'] = '';
-			$_SESSION['term2'] = '';
-			$_SESSION['term3'] = '';
-			$_SESSION['term4'] = '';
-			$_SESSION['notterm1'] = '';
-			$_SESSION['notterm2'] = '';
-			$_SESSION['notterm3'] = '';
-			$_SESSION['notterm4'] = '';
-			$_SESSION['sign1'] = '';
-			$_SESSION['minNum'] = '';
-			$_SESSION['maxNum'] = '';
+	if($_POST['reset-list'] == 'Reset' OR $_POST['reset-word'] == 'Reset'){
+		//Search:
+		$_SESSION['total_records'] = '';
+		$_SESSION['word'] = '';
+		$_SESSION['num'] = '';
+		$_SESSION['check'] = '';
+		$_SESSION['genotype'] = '';
+		$_SESSION['comment'] = '';
+		$_SESSION['term1'] = '';
+		$_SESSION['term1'] = '';
+		$_SESSION['term2'] = '';
+		$_SESSION['term3'] = '';
+		$_SESSION['term4'] = '';
+		$_SESSION['notterm1'] = '';
+		$_SESSION['notterm2'] = '';
+		$_SESSION['notterm3'] = '';
+		$_SESSION['notterm4'] = '';
+		$_SESSION['sign1'] = '';
+		$_SESSION['minNum'] = '';
+		$_SESSION['maxNum'] = '';
 
-			/*
-			// Add strains:
-			$_SESSION["Line"] = '';
-			$_SESSION['saveFail'] = '';
-			for($i = 1; $i <= 50; $i++) {
-				$_SESSION["txtGenotype$i"] = '';
-				$_SESSION["txtDonor$i"] = '';
-				$_SESSION["txtRecipient$i"] = '';
-				$_SESSION["txtComment$i"] = '';
-			}
-			*/
-		//}
+		if($_POST['reset-list'] == 'Reset'){
+			header("Location: index.php?mode=search&type=number");
+		}
+		elseif($_POST['reset-word'] == 'Reset'){
+			header("Location: index.php?mode=search&type=word");
+		}
 	}
 
 }
@@ -233,14 +222,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'add' && $_PO
 				$validate['Genotype'] = 0;
 			}
 
-			// TODO: check if donor/recipient is a valid strain
-			if((!empty($_POST["txtDonor"][$i]) && is_numeric($_POST["txtDonor"][$i])) || empty($_POST["txtDonor"][$i])){
+			if(strain_exists($_POST["txtDonor"][$i]) || empty($_POST["txtDonor"][$i])){
 				$validate['Donor'] = 1;
 			} else {
 				$validate['Donor'] = 0;
 			}
 
-			if((!empty($_POST["txtRecipient"][$i]) && is_numeric($_POST["txtRecipient"][$i])) || empty($_POST["txtRecipient"][$i])){
+			if(strain_exists($_POST["txtRecipient"][$i]) || empty($_POST["txtRecipient"][$i])){
 				$validate['Recipient'] = 1;
 			} else {
 				$validate['Recipient'] = 0;

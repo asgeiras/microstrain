@@ -1,3 +1,0 @@
-<?php
-// Moved to actions
-?>

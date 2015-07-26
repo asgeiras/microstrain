@@ -20,28 +20,17 @@ include("functions.php");
 include("actions.php");
 
 // Troubleshooting
-print("session:<pre class='noPrint'>".print_r($_SESSION, true)."</pre>");
+//print("session:<pre class='noPrint'>".print_r($_SESSION, true)."</pre>");
 
 ?>
 
 <html>
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<meta name="author" content="Your Name / Original design: Andreas Viklund - http://andreasviklund.com/" />
 		<link rel="stylesheet" type="text/css" href="variant.css" media="screen,projection" title="Variant Portal" />
 		<link rel="stylesheet" type="text/css" href="print.css" media="print">
 
 		<title>Dr Strainlove</title>
-		<!--
-		<script>
-			function hideDiv(){
-				document.getElementById('hideDiv').style.display = "none";
-			}
-
-			hideDiv()
-		</script> -->
-		<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-		<script type="text/javascript" src="js/script.js" ></script>
 	</head>
 	<body>
 		<div id="container" >
@@ -148,4 +137,6 @@ print("session:<pre class='noPrint'>".print_r($_SESSION, true)."</pre>");
 			</div>
 		</div> <!-- id="container" -->
 	</body>
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	<script type="text/javascript" src="js/script.js" ></script>
 </html>

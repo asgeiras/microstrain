@@ -50,65 +50,57 @@ if($_GET['type'] == 'word') {
 			$field2 = "Genotype";
 		}
 
-		// Add the additional search parameters to the mysql query if more than one field is used:
-		if($term1 == '') {
-			//TODO
-			print("No keyword entered woop");
-			die();
-			//header("Location: index.php?mode=list&error=error");
+		// Adjust sql query depending on terms entered
+		if($term2 == '') {
+			$incl2 = '';
 		} else {
-
-			if($term2 == '') {
-				$incl2 = '';
-			} else {
-				$incl2 = "AND ($field1 LIKE :term2 OR $field2 LIKE :commentterm2)";
-			}
-
-			if($term3 == '') {
-				$incl3 = '';
-			} else {
-				$incl3 = "AND ($field1 LIKE :term3 OR $field2 LIKE :commentterm3)";
-			}
-
-			if($term4 == '') {
-				$incl4 = '';
-			} else {
-				$incl4 = "AND ($field1 LIKE :term4 OR $field2 LIKE :commentterm4)";
-			}
-
-			if($notterm1 == '') {
-				$excl1 = '';
-			} else {
-				$excl1 = "AND ($field1 NOT LIKE :notterm1 AND $field2 NOT LIKE :commentnotterm1)";
-			}
-
-			if($notterm2 == '') {
-				$excl2 = '';
-			} else {
-				$excl2 = "AND ($field1 NOT LIKE :notterm2 AND $field2 NOT LIKE :commentnotterm2)";
-			}
-
-			if($notterm3 == ''){
-				$excl3 = '';
-			} else {
-				$excl3 = "AND ($field1 NOT LIKE :notterm3 AND $field2 NOT LIKE :commentnotterm3)";
-			}
-
-			if($notterm4 == ''){
-				$excl4 = '';
-			} else {
-				$excl4 = "AND ($field1 NOT LIKE :notterm4 AND $field2 NOT LIKE :commentnotterm4)";
-			}
-
-			if($sign1 == ''){
-				$sign = '';
-			} else {
-				$sign = " AND Signature LIKE :sign1";
-			}
-
-			$sql = "SELECT * FROM strains WHERE ($field1 LIKE :term1 OR $field2 LIKE :commentterm1) $incl2 $incl3 $incl4 $excl1 $excl2 $excl3 $excl4 $sign ORDER BY Strain ASC LIMIT :startval, :limitval";
-			$sql2 = "SELECT COUNT(Strain) FROM strains WHERE ($field1 LIKE :term1 OR $field2 LIKE :commentterm1) $incl2 $incl3 $incl4 $excl1 $excl2 $excl3 $excl4 $sign";
+			$incl2 = "AND ($field1 LIKE :term2 OR $field2 LIKE :commentterm2)";
 		}
+
+		if($term3 == '') {
+			$incl3 = '';
+		} else {
+			$incl3 = "AND ($field1 LIKE :term3 OR $field2 LIKE :commentterm3)";
+		}
+
+		if($term4 == '') {
+			$incl4 = '';
+		} else {
+			$incl4 = "AND ($field1 LIKE :term4 OR $field2 LIKE :commentterm4)";
+		}
+
+		if($notterm1 == '') {
+			$excl1 = '';
+		} else {
+			$excl1 = "AND ($field1 NOT LIKE :notterm1 AND $field2 NOT LIKE :commentnotterm1)";
+		}
+
+		if($notterm2 == '') {
+			$excl2 = '';
+		} else {
+			$excl2 = "AND ($field1 NOT LIKE :notterm2 AND $field2 NOT LIKE :commentnotterm2)";
+		}
+
+		if($notterm3 == ''){
+			$excl3 = '';
+		} else {
+			$excl3 = "AND ($field1 NOT LIKE :notterm3 AND $field2 NOT LIKE :commentnotterm3)";
+		}
+
+		if($notterm4 == ''){
+			$excl4 = '';
+		} else {
+			$excl4 = "AND ($field1 NOT LIKE :notterm4 AND $field2 NOT LIKE :commentnotterm4)";
+		}
+
+		if($sign1 == ''){
+			$sign = '';
+		} else {
+			$sign = " AND Signature LIKE :sign1";
+		}
+
+		$sql = "SELECT * FROM strains WHERE ($field1 LIKE :term1 OR $field2 LIKE :commentterm1) $incl2 $incl3 $incl4 $excl1 $excl2 $excl3 $excl4 $sign ORDER BY Strain ASC LIMIT :startval, :limitval";
+		$sql2 = "SELECT COUNT(Strain) FROM strains WHERE ($field1 LIKE :term1 OR $field2 LIKE :commentterm1) $incl2 $incl3 $incl4 $excl1 $excl2 $excl3 $excl4 $sign";
 	}
 }
 //End Search for keywords//
@@ -311,13 +303,6 @@ if($sql){
 		$startval = 0;
 	}
 
-	// Troubleshooting
-	/*
-	echo "<p>Pages: $pages</p>";
-	echo "<p>Page: $page</p>";
-	echo "<p>Startval: $startval</p>";
-	echo "<p>Limit: $limit</p>";*/
-
 	// Bind parameters for limited rows
 	$stmt->bindParam(':sign1', $sign1param);
 
@@ -358,7 +343,7 @@ if($sql){
 	$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	$showing_records = count($result);
 
-	// Troubleshooting
+	/* TODO Troubleshooting
 	echo $sql;
 	echo "<br>";
 	echo $sql2;
@@ -390,7 +375,7 @@ if($sql){
 	echo "total_records: $total_records<br>";
 	echo "total_records session: " . $_SESSION['total_records'] . "<br>";
 	//print("result:<pre>".print_r($result, true)."</pre>");
-	print("list:<pre>".print_r($list, true)."</pre>");
+	print("list:<pre>".print_r($list, true)."</pre>"); */
 
 	$_SESSION['total_records'] = $total_records;
 
@@ -472,8 +457,6 @@ if($sql){
 					echo "<button class='display-none' id='check-none'>None</button>";
 				echo "</th>";
 			echo "</tr>";
-			// WORK DONE TO HERE
-
 
 			echo "<form action='index.php?mode=myList' name='selectRow' method='post'>";
 				echo "<input type='submit' title='Show a table of only the selected strains' name='show' value='Show selected'/>";

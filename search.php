@@ -164,10 +164,7 @@ if($_GET['search'] == 1){
 			$check1 = 'checked="checked"';
 			$check2 = '';
 		}
-
 		?>
-
-
 
 		<p>Search in:</p>
 		<label for="checkboxGenotype"><input type="checkbox" name="check[genotype]" id="checkboxGenotype" title="Select which fields to search in" value="genotype" <?php echo ($check1); ?>>Genotype</label><br>
@@ -215,8 +212,7 @@ if($_GET['search'] == 1){
 				    <input type="hidden" name="isPosted" value="TRUE">
 		        	<input type='hidden' name='form-type' id='form-type' value="search">
 				    <input type="submit" name="button" value="search-text">
-					<input type="submit" title="Reset all fields and clear the results table" name="reset" value="Reset">
-					<!-- <input type="button" title="Reset all fields and clear the results table" name="reset" value="Reset" onclick="window.location.href='index.php?mode=search&type=<?php // echo $_GET['type'];?>&reset=TRUE'"> -->
+					<input type="submit" title="Reset all fields and clear the results table" name="reset-word" value="Reset">
 				</td>
 			</tr>
 		</table>
@@ -261,8 +257,7 @@ if($_GET['search'] == 1){
 				    <input type="hidden" name="isPosted" value="TRUE">
 		        	<input type='hidden' name='form-type' id='form-type' value="search">
 				    <input type="submit" name="button" value="search-list">
-					<input type="submit" title="Reset all fields and clear the results table" name="reset" value="Reset">
-					<!-- <input type="button" title="Reset all fields and clear the results table" name="reset" value="Reset" onclick="window.location.href='index.php?mode=search&type=<?php // echo $_GET['type'];?>&reset=TRUE'"> -->
+					<input type="submit" title="Reset all fields and clear the results table" name="reset-list" value="Reset">
 				</td>
 			</tr>
 		</table>
