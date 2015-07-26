@@ -1,5 +1,10 @@
 <?php
 
+// TODO: JS for showing select all and none buttons
+// TODO: JS for selecting all and none
+// TODO: JS for hiding no JS-notice
+// TODO: Setting button text correctly
+
 // Start the session
 session_start();
 
@@ -76,6 +81,7 @@ include("actions.php");
 			</div>
 
 			<div id="main">
+				<p class="validation-fail">No JS detected! Some functionality disabled!</p>
 
 				<?php	  
 				$value = $_GET['mode']; 

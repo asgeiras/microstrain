@@ -207,21 +207,25 @@ if ($_GET['mode'] == 'add3') {
 
 //Begin List edited strains
 if ($_GET['mode'] == 'edit2') {
-	$page = 1;
-	$limit = 100;
-	$list = $selected;
+	if(!$transaction_fail){
+		$page = 1;
+		$limit = 100;
+		$list = $selected;
 
-	// Prepare parameters for strains in list
-	$listInQuery = array();
-	for($i = 1; $i <= count($list); $i++){
-		$listInQuery[$i] = ":list_" . $i;
+		// Prepare parameters for strains in list
+		$listInQuery = array();
+		for($i = 1; $i <= count($list); $i++){
+			$listInQuery[$i] = ":list_" . $i;
+		}
+		$listInQuery = implode(", ", $listInQuery);
+		$numberOfListParameters = count($list);
+
+		$message = "Please check the following ";
+		$sql  = "SELECT * FROM strains WHERE Strain IN (" . $listInQuery . ")";
+		$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain IN (" . $listInQuery . ")";
+	} else {
+		unset($sql);
 	}
-	$listInQuery = implode(", ", $listInQuery);
-	$numberOfListParameters = count($list);
-
-	$message = "Please check the following ";
-	$sql  = "SELECT * FROM strains WHERE Strain IN (" . $listInQuery . ")";
-	$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain IN (" . $listInQuery . ")";
 }
 //End List inserted strains
 
@@ -621,6 +625,10 @@ if($sql){
 	}
 
 } else {
-	echo "<span style='color: red'><strong>You need to provide at least one keyword!</strong></span><br>";
+	if($transaction_fail){
+		echo "<span style='color: red'><strong>Something went wrong when talking to the database!</strong></span><br>";
+	} else {
+		echo "<span style='color: red'><strong>You need to provide at least one keyword!</strong></span><br>";
+	}
 }
 ?>

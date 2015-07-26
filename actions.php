@@ -138,7 +138,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'edit'){
 		// Find out how many records there are to update
 		$size = count($_POST['Genotype']);
 
-		// TODO: Transaction?
+		// Begin database transaction
+		$dbh->beginTransaction();
+
 		// Create SQL query
 		$sql  = "UPDATE strains ";
 			$sql .= "SET Genotype = :genotype, ";
@@ -182,6 +184,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'edit'){
 
 			// Execute statement
 			$stmt->execute();
+
+			// Check error codes
+			if($stmt->errorCode() === '00000'){
+				$success = TRUE;
+			} else {
+				$success = FALSE;
+				break;
+			}
+		}
+
+		// Commit if all were successful
+		unset($transaction_fail);
+		if($success){
+			$dbh->commit();
+			$transaction_fail = FALSE;
+		} else {
+			$dbh->rollBack();
+			$transaction_fail = TRUE;
 		}
 	}
 }
@@ -266,6 +286,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'add' && $_PO
 			// Create SQL query
 			$sql = "INSERT INTO strains (Genotype,Donor,Recipient,Comment,Signature) VALUES (:genotype, :donor, :recipient, :comment, :signature)";
 
+			// Begin database transaction
+			$dbh->beginTransaction();
+
 			// Prepare statement
 			$stmt = $dbh->prepare($sql);
 
@@ -291,6 +314,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'add' && $_PO
 					// Execute statement
 					$stmt->execute();
 
+					// Check error codes
+					if($stmt->errorCode() === '00000'){
+						$success = TRUE;
+					} else {
+						$success = FALSE;
+						break;
+					}
+
 					// Save ID of last inserted row
 					$inserted[] = $dbh->lastInsertId();
 					
@@ -302,7 +333,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'add' && $_PO
 				}
 			}
 
-			unset($_SESSION["Line"]);
+			// Commit if all were successful
+			unset($transaction_fail);
+			if($success){
+				$dbh->commit();
+				$transaction_fail = FALSE;
+				unset($_SESSION["Line"]);
+			} else {
+				$dbh->rollBack();
+				$transaction_fail = TRUE;
+			}
 		}
 		else{
 			header("Location: index.php?mode=add&Line=" . $_SESSION["Line"]);
