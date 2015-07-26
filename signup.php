@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 	//	GET THE CHOSEN U AND P, AND CHECK IT FOR DANGEROUS CHARCTERS
 	//====================================================================
 	$uname = $_POST['username'];
-        $type = $_POST['type'];
+    $type = $_POST['type'];
 	$pword = $_POST['password'];
 	$sign = $_POST['signature'];
 
@@ -59,22 +59,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 
 	if ($uLength >= 5 && $uLength <= 20) {
 		$errorMessage = "";
-	}
-	else {
+	} else {
 		$errorMessage = $errorMessage . "Username must be between 5 and 20 characters" . "<BR>";
 	}
 
-if ($sLength >= 2 && $sLength <= 20) {
+	if ($sLength >= 2 && $sLength <= 20) {
 		$errorMessage = "";
-	}
-	else {
+	} else {
 		$errorMessage = $errorMessage . "Signature must be between 2 and 20 characters" . "<BR>";
 	}
 
 	if ($pLength >= 8 && $pLength <= 16) {
 		$errorMessage = "";
-	}
-	else {
+	} else {
 		$errorMessage = $errorMessage . "Password must be between 8 and 16 characters" . "<BR>";
 	}
 
@@ -82,17 +79,16 @@ if ($sLength >= 2 && $sLength <= 20) {
 
 	if ($type == 'Superuser' or $type == 'User') {
 		$errorMessage = "";
-	}
-	else {
+	} else {
 		$errorMessage = $errorMessage . "User Type can only be User or Superuser" . "<BR>";
 	}
 
 
 
 
-//test to see if $errorMessage is blank
-//if it is, then we can go ahead with the rest of the code
-//if it's not, we can display the error
+	//test to see if $errorMessage is blank
+	//if it is, then we can go ahead with the rest of the code
+	//if it's not, we can display the error
 
 	//====================================================================
 	//	Write to the database
@@ -100,92 +96,88 @@ if ($sLength >= 2 && $sLength <= 20) {
 	if ($errorMessage == "") {
         include('../local/datalogin.php');
         
-	$db_handle = mysql_connect($dbhost, $dbusername, $dbuserpass);
-	$db_found = mysql_select_db($dbname, $db_handle);
+		$db_handle = mysql_connect($dbhost, $dbusername, $dbuserpass);
+		$db_found = mysql_select_db($dbname, $db_handle);
 
-	if ($db_found) {
+		if ($db_found) {
 
-		$uname = quote_smart($uname, $db_handle);
-		$pword = quote_smart($pword, $db_handle);
-		$type = quote_smart($type, $db_handle);
-		$sign = quote_smart($sign, $db_handle);
-	//====================================================================
-	//	CHECK THAT THE USERNAME IS NOT TAKEN
-	//====================================================================
+			$uname = quote_smart($uname, $db_handle);
+			$pword = quote_smart($pword, $db_handle);
+			$type = quote_smart($type, $db_handle);
+			$sign = quote_smart($sign, $db_handle);
+			//====================================================================
+			//	CHECK THAT THE USERNAME IS NOT TAKEN
+			//====================================================================
 
-		$SQL = "SELECT * FROM users WHERE Username = $uname OR Signature = $sign";
-		$result = mysql_query($SQL);
-		$num_rows = mysql_num_rows($result);
+			$SQL = "SELECT * FROM users WHERE Username = $uname OR Signature = $sign";
+			$result = mysql_query($SQL);
+			$num_rows = mysql_num_rows($result);
 
-		if ($num_rows > 0) {
-			$errorMessage = "Username or Signature already taken";
+			if ($num_rows > 0) {
+				$errorMessage = "Username or Signature already taken";
+			}
+			
+			else {
+
+				$SQL = "INSERT INTO users (Username, Usertype, Password, Signature) VALUES ($uname, $type, md5($pword), $sign)";
+
+				$result = mysql_query($SQL) or die ("ERROR". mysql_error()."<br>". "$SQL");
+
+				mysql_close($db_handle);
+
+				//=================================================================================
+				//	START THE SESSION AND PUT SOMETHING INTO THE SESSION VARIABLE CALLED login
+				//	SEND USER TO A DIFFERENT PAGE AFTER SIGN UP
+				//=================================================================================
+
+				//session_start();
+				//$_SESSION['login'] = "1";
+				//$_SESSION['user'] = $uname;
+				header ("Location: index.php?mode=addUser&save=success");
+
+			}
+		} else {
+			$errorMessage = "Database Not Found";
 		}
-		
-		else {
-
-			$SQL = "INSERT INTO users (Username, Usertype, Password, Signature) VALUES ($uname, $type, md5($pword), $sign)";
-
-			$result = mysql_query($SQL) or die ("ERROR". mysql_error()."<br>". "$SQL");
-
-			mysql_close($db_handle);
-
-		//=================================================================================
-		//	START THE SESSION AND PUT SOMETHING INTO THE SESSION VARIABLE CALLED login
-		//	SEND USER TO A DIFFERENT PAGE AFTER SIGN UP
-		//=================================================================================
-
-			//session_start();
-			//$_SESSION['login'] = "1";
-			//$_SESSION['user'] = $uname;
-			header ("Location: index.php?mode=addUser&save=success");
-
-		}
-
 	}
-	else {
-		$errorMessage = "Database Not Found";
-	}
-
-
-
-
-	}
-
 }
 
 
 ?>
 
-	<html>
-	<head>
-	<title>Basic Login Script</title>
 
-
-	</head>
-	<body>
 <?php
 
-if ($_GET['save'] != "success")
-{
+if ($_GET['save'] != "success") {
 ?>
-<FORM NAME ="form1" METHOD ="POST" ACTION ="index.php?mode=addUser">
-<table><tr><td>
-Username:</td><td colspan=2> <INPUT TYPE = 'TEXT' Name ='username'  value="<?php print $_POST['username'];?>" maxlength="20"></td><td> (5-20 characters)</td></tr>
+	<form class="signup-form" name="form1" method="POST" action="index.php?mode=addUser">
+		<div class="form-group">
+			<label for="username">Username:</label>
+			<input type="text" id="username" name="username" placeholder="Username">
+			<span class="helptext">Has to be at least 5 characters long</span>
+		</div>
+		<div class="form-group">
+			<label for="password">Password:</label>
+			<input type="password" id="password" name="password" placeholder="Password">
+			<span class="helptext">Has to be at least 8 characters long</span>
+		</div>
+		<div class="form-group">
+			<label for="signature">Signature:</label>
+			<input type="signature" id="signature" name="signature" placeholder="Signature">
+			<span class="helptext">This will be shown in strain lists, has to be at least 2 characters</span>
+		</div>
+		<div class="form-group">
+			<label for="user-type">User type:</label>
+			<select id="user-type" name="user-type">
+				<option value="Superuser">Superuser</option>
+				<option value="User">User</option>
+			</select>
+			<span class="helptext">Superusers can insert, edit, and delete strains as well as add new users</span>
+		</div>
+		<input type="submit" name="Submit" value="Register">
+	</form>
 
-<tr><td>Password:</td><td colspan=2><INPUT TYPE = 'PASSWORD' Name ='password'  value="<?php print $_POST['password'];?>" maxlength="16"></td><td> (8-16 characters)</td></tr>
-<td>Signature:</td><td colspan=2> <INPUT TYPE = 'TEXT' Name ='signature'  value="<?php print $_POST['signature'];?>" maxlength="20"></td><td> (2-20 characters)</td></tr>
-<tr><td>User Type:</td><td align=left><select name="type"><option value="Superuser">Superuser</option><option value="User">User</option></select></td><td><div align=right><INPUT TYPE = "Submit" Name = "Submit1"  VALUE = "Register"></div></td><td></td></tr>
-
-</table>
-
-
-</FORM>
-<P>
-
-<?php
+<?php 
 }
 echo $errorMessage;
 ?>
-
-	</body>
-	</html>

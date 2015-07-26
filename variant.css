@@ -332,3 +332,21 @@ input.validation-fail, textarea.validation-fail {
 p.validation-fail {
 	color: red;
 }
+
+.signup-form label {
+	display: inline-block;
+	width: 75px;
+	font-weight: bold;
+}
+
+.signup-form .form-group input, .signup-form .form-group select {
+	width: 150px;
+}
+
+form .helptext {
+	font-style: italic;
+}
+
+.form-group {
+	padding: 4px 0;
+}
