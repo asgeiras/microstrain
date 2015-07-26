@@ -359,4 +359,90 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'add' && $_PO
 	header("Location: index.php?mode=add&Line=1");
 }
 
+// DO ADD NEW USER
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'new-user'){
+
+	// Save post variables
+	$username  = $_POST['username'];
+    $usertype  = $_POST['usertype'];
+	$password  = $_POST['password'];
+	$signature = $_POST['signature'];
+
+	// Get length of input
+	$uLength = strlen($username);
+	$pLength = strlen($password);
+	$sLength = strlen($signature);
+
+	// Validate
+	$goAhead = TRUE;
+	unset($validation);
+
+	$validation['username'] = 1;
+	$validation['signature'] = 1;
+	$validation['password'] = 1;
+
+	if ($uLength < 5) {
+		$goAhead = FALSE;
+		$errorMessage .= "Username must be at least 5 characters long<br>";
+		$validation['username'] = 0;
+	}
+
+	if ($sLength < 2 OR $sLength > 15) {
+		$goAhead = FALSE;
+		$errorMessage .= "Signature must be between 2 and 15 characters<br>";
+		$validation['signature'] = 0;
+	}
+
+	if ($pLength < 8) {
+		$goAhead = FALSE;
+		$errorMessage .= "Password must be at least 8 characters long<br>";
+		$validation['password'] = 0;
+	}
+
+	// Check that type is one of 'User' or 'Superuser'
+	if (!($usertype == 'Superuser' OR $usertype == 'User')) {
+		$goAhead = FALSE;
+		$errorMessage .= "User Type can only be User or Superuser<br>";
+	}
+
+	// Check if username already exists
+	if(user_exists($username, "username")){
+		$goAhead = FALSE;
+		$errorMessage .= "User name already taken!<br>";
+		$validation['username'] = 0;
+	}
+
+	// Check if username already exists
+	if(user_exists($username, "signature")){
+		$goAhead = FALSE;
+		$errorMessage .= "Signature already taken!<br>";
+		$validation['signature'] = 0;
+	}
+
+	// Validation passed
+	if ($goAhead) {
+		// Create SQL query
+		$sql = "INSERT INTO users (Username, Usertype, Password, Signature) VALUES (:username, :usertype, :password, :signature)";
+
+		// Prepare statement
+		$stmt = $dbh->prepare($sql);
+
+		// Hash password
+		$password = md5($password);
+
+		// Bind parameters
+		$stmt->bindParam(":username", $username);
+		$stmt->bindParam(":usertype", $usertype);
+		$stmt->bindParam(":password", $password);
+		$stmt->bindParam(":signature", $signature);
+
+		// Execute statement
+		if($stmt->execute()){
+			$insert_success = TRUE;
+		} else {
+			$insert_success = FALSE;
+		}
+	}
+}
+
 ?>

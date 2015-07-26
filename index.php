@@ -13,6 +13,9 @@ if($_GET['logout'] == '1') {
 // Connect to the database or die
 include("db.php");
 
+// Include all functions
+include("functions.php");
+
 // Include all actions for forms
 include("actions.php");
 
@@ -40,7 +43,6 @@ print("session:<pre>".print_r($_SESSION, true)."</pre>");
 		<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 		<script type="text/javascript" src="js/script.js" ></script>
 	</head>
-
 	<body>
 		<div id="container" >
 			<div id="toplinks" class='noPrint'>
@@ -138,11 +140,6 @@ print("session:<pre>".print_r($_SESSION, true)."</pre>");
 						elseif (($value == 'addUser') && ($_GET['save'] != 'success')) {
 							include("signup.php");
 						}
-						elseif (($value == 'addUser') && ($_GET['save'] == 'success')) {
-							echo "<span style='font-weight: bold'>Success!</span><br>The new user was successfully added.";
-							$helpmessage = "To log in as the new user, <a href='index.php?logout=1'>log out " . $_SESSION['user'] . "</a>.";
-							//include("signup.php");
-						} 
 						else {
 							include("search.php");
 						}
