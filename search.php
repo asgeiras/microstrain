@@ -211,7 +211,7 @@ if($_GET['search'] == 1){
 				<td colspan="4">
 				    <input type="hidden" name="isPosted" value="TRUE">
 		        	<input type='hidden' name='form-type' id='form-type' value="search">
-				    <input type="submit" name="button" value="search-text">
+				    <input type="submit" name="search-text" value="Search">
 					<input type="submit" title="Reset all fields and clear the results table" name="reset-word" value="Reset">
 				</td>
 			</tr>
@@ -256,7 +256,7 @@ if($_GET['search'] == 1){
 				<td colspan="2">
 				    <input type="hidden" name="isPosted" value="TRUE">
 		        	<input type='hidden' name='form-type' id='form-type' value="search">
-				    <input type="submit" name="button" value="search-list">
+				    <input type="submit" name="search-list" value="Search">
 					<input type="submit" title="Reset all fields and clear the results table" name="reset-list" value="Reset">
 				</td>
 			</tr>

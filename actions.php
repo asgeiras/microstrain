@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'login'){
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'search'){
 
 	// Search button has been pressed
-	if($_POST['button'] == 'search-text' || $_POST['button'] == 'search-list'){
+	if($_POST['search-text'] == 'Search' || $_POST['search-list'] == 'Search'){
 		$_SESSION['sign1'] = $_POST['sign1'];
 
 		// Search is text
@@ -208,8 +208,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'edit'){
 
 // DO ADD
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'add' && $_POST['submit']){
-
-	//TODO: Transactions?
 
 	// Check user rights
 	if($_SESSION['Usertype'] == 'Superuser') {

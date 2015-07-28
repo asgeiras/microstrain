@@ -4,6 +4,7 @@
 // TODO: JS for selecting all and none
 // TODO: JS for hiding no JS-notice
 // TODO: Setting button text correctly
+// TODO: Use GET automatically
 
 // Start the session
 session_start();
