@@ -5,7 +5,7 @@ if($_GET['type'] == 'word') {
 
 	// If all but signature fields are empty
 	if(empty($term1) && empty($term2) && empty($term3) && empty($term4) && empty($notterm1) && empty($notterm2) && empty($notterm3) && empty($notterm4) && !empty($sign1)){
-		
+
 		// Build SQL statements, one limited and one that counts unlimited
 		$sql = "SELECT * FROM strains WHERE Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
 		$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Signature LIKE :sign1";
@@ -137,7 +137,7 @@ if($_GET['type'] == 'number') {
 				$sql = "SELECT * FROM strains WHERE Strain = :minNum AND Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
 				$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain = :minNum AND Signature LIKE :sign1";
 			}
-			
+
 			// If min is empty while max is filled: only find the entered strain
 			if (empty($minNum) && !empty($maxNum)) {
 				$sql = "SELECT * FROM strains WHERE Strain = :maxNum AND Signature LIKE :sign1 ORDER BY Strain ASC LIMIT :startval, :limitval";
@@ -199,7 +199,7 @@ if ($_GET['mode'] == 'add3') {
 	$listInQuery = implode(", ", $listInQuery);
 	$numberOfListParameters = count($list);
 
-	$message = "You successfully saved the following "; 
+	$message = "You successfully saved the following ";
 	$sql  = "SELECT * FROM strains WHERE Strain IN (" . $listInQuery . ")";
 	$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain IN (" . $listInQuery . ")";
 }
@@ -401,10 +401,10 @@ if($sql){
 
 		//Multi page:
 		if ($total_records > $limit) {
-			echo "Showing <span style='font-weight: bold'> " . $showing_records . "</span> strains per page starting at no. <span style='font-weight: bold'>" . ($startval+1) . "</span>:<br>"; 
+			echo "Showing <span style='font-weight: bold'> " . $showing_records . "</span> strains per page starting at no. <span style='font-weight: bold'>" . ($startval+1) . "</span>:<br>";
 
 			echo "<br>Page <span style='font-weight: bold'>" . $page . "</span> of <span style='font-weight: bold'>" . $pages . "</span>. ";
-			
+
 			// Print pagination links
 			for($n = 1; $n <= $pages; $n++) {
 
@@ -432,14 +432,14 @@ if($sql){
 						echo ' <a href="' . $link . '">' . $n . '</a> ';
 					} else {
 						echo " <span style='font-weight: bold; color: blue;'>" . $n . "</span> ";
-					} 
+					}
 				}
 				elseif($_GET['type'] == 'number'){
 					if ($n != $page){
 						echo ' <a href="?mode=search&amp;type=number&amp;search=1&amp;minNum=' . $minNum . '&amp;maxNum=' . $maxNum . '&amp;sign1=' . $sign1 . '&amp;limit=' . $limit . '&amp;page=' . $n . '">' . $n . '</a> ';
 					} else {
 						echo " <span style='font-weight: bold; color: blue;'>" . $n . "</span> ";
-					} 
+					}
 				}
 			}
 		}
@@ -476,7 +476,7 @@ if($sql){
 
 				// Loop through all strains
 				foreach ($result as $row) {
-					
+
 					// Convert html characters to printable
 					$genotype = htmlspecialchars($row['Genotype']);
 					$genotype1 = htmlspecialchars($row['Genotype']);
@@ -530,12 +530,12 @@ if($sql){
 					}
 
 					echo "<tr>";
-						echo "<td>";    
+						echo "<td>";
 							echo 'DA' . $row['Strain'];
 							$csv_output .= "DA" . $row['Strain'] . "; ";
 						echo "</td>";
 
-						echo "<td>"; 
+						echo "<td>";
 							echo $genotype;
 							$csv_output .= $genotype1 . "; ";
 						echo "</td>";
@@ -560,17 +560,17 @@ if($sql){
 							}
 						echo "</td>";
 
-						echo "<td>"; 
+						echo "<td>";
 							echo $comment;
 							$csv_output .= $comment1 . "; ";
 						echo "</td>";
 
-						echo "<td>"; 
+						echo "<td>";
 							echo $row['Signature'];
 							$csv_output .= $row['Signature'] . "; ";
 						echo "</td>";
 
-						echo "<td>"; 
+						echo "<td>";
 							if ($row['Created'] == "0000-00-00 00:00:00"){
 								echo '';
 								$csv_output .= ";\n";
@@ -580,7 +580,7 @@ if($sql){
 							}
 						echo "</td>";
 						echo "<td>";
-							echo "<div align=center><input type=checkbox name='selected[]' value=" . $row['Strain'] . "></div>";
+							echo "<div align=center><input class='strain-checkbox' type=checkbox name='selected[]' value=" . $row['Strain'] . "></div>";
 						echo "</td>";
 					echo "</tr>";
 					//Stop making the table
@@ -605,14 +605,14 @@ if($sql){
 						echo ' <a href="' . $link . '">' . $n . '</a> ';
 					} else {
 						echo " <span style='font-weight: bold; color: blue;'>" . $n . "</span> ";
-					} 
+					}
 				}
 				elseif($_GET['type'] == 'number'){
 					if ($n != $page){
 						echo ' <a href="?mode=search&amp;type=number&amp;search=1&amp;minNum=' . $minNum . '&amp;maxNum=' . $maxNum . '&amp;sign1=' . $sign1 . '&amp;limit=' . $limit . '&amp;page=' . $n . '">' . $n . '</a> ';
 					} else {
 						echo " <span style='font-weight: bold; color: blue;'>" . $n . "</span> ";
-					} 
+					}
 				}
 			}
 		}

@@ -11,10 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'login'){
 	$stmtCount = $dbh->prepare("SELECT COUNT(*) FROM users WHERE Username = :uname AND Password = :pword");
 
 	// Bind parameters
+	$pwordmd5 = md5($pword);
 	$stmt->bindParam(":uname", $uname);
-	$stmt->bindParam(":pword", md5($pword));
+	$stmt->bindParam(":pword", $pwordmd5);
 	$stmtCount->bindParam(":uname", $uname);
-	$stmtCount->bindParam(":pword", md5($pword));
+	$stmtCount->bindParam(":pword", $pwordmd5);
 
 	// Execute the statements
 	$stmt->execute();
@@ -58,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'search'){
 		$_SESSION['sign1'] = $_POST['sign1'];
 
 		// Search is text
-		if($_POST['button'] == 'search-text') {
+		if($_POST['search-text'] == 'Search') {
 			$_SESSION['term1'] = $_POST['term1'];
 			$_SESSION['term2'] = $_POST['term2'];
 			$_SESSION['term3'] = $_POST['term3'];
@@ -81,9 +82,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'search'){
 			}
 
 			// If all search boxes are empty, redirect to error
-			if(empty($_POST['term1']) && 
-				empty($_POST['term2']) && 
-				empty($_POST['term3']) && 
+			if(empty($_POST['term1']) &&
+				empty($_POST['term2']) &&
+				empty($_POST['term3']) &&
 				empty($_POST['term4']) &&
 				empty($_POST['sign1'])
 			) {
@@ -92,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'search'){
 		}
 
 		// Search is number/list
-		if($_POST['button'] == 'search-list') { 
+		if($_POST['search-list'] == 'Search') {
 			$_SESSION['minNum'] = $_POST['minNum'];
 			$_SESSION['maxNum'] = $_POST['maxNum'];
 		}
@@ -322,7 +323,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'add' && $_PO
 
 					// Save ID of last inserted row
 					$inserted[] = $dbh->lastInsertId();
-					
+
 					// Clear the session
 					unset($_SESSION["txtGenotype"][$i]);
 					unset($_SESSION["txtDonor"][$i]);
@@ -350,7 +351,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'add' && $_PO
 
 // DO UPDATE LINES
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'add' && $_POST['update_lines']){
-	$num_lines = count($_POST["txtGenotype"]);	
+	$num_lines = count($_POST["txtGenotype"]);
 
 	unset($_SESSION["txtGenotype"]);
 	unset($_SESSION["txtDonor"]);

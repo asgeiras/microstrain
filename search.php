@@ -15,7 +15,7 @@ else {
 
 if (isset($_GET['page'])) {
 	$page = ($_GET['page']);
-} else { 
+} else {
 	$page = 1;
 }
 
@@ -139,14 +139,14 @@ if($_GET['search'] == 1){
 }
 
 ?>
-<form name="search" id="search" action="index.php?mode=search&amp;type=<?php echo $_GET['type'];?>" method="post">
+<form name="search" id="search" action="index.php?mode=search&amp;type=<?php echo $_GET['type'];?>" method="POST">
 
 	<?php
 
 	//Are we in the 'Search' tab?
 	if($_GET['type'] == 'word' || !isset($_GET['type'])) {
-		
-		// Set Genotype as default or remember the status of the checkboxes in the previous search: 
+
+		// Set Genotype as default or remember the status of the checkboxes in the previous search:
 		$helpmessage = "Select which field(s) to search in and type a keyword in at least one of the input boxes.<br>When you click 'Search', your keywords are remembered until you click 'Reset'.";
 
 		if($searchgenotype && !$searchcomment) {

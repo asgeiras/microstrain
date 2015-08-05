@@ -1,9 +1,5 @@
 <?php
 
-// TODO: JS for showing select all and none buttons
-// TODO: JS for selecting all and none
-// TODO: JS for hiding no JS-notice
-// TODO: Setting button text correctly
 // TODO: Use GET automatically
 
 // Start the session
@@ -26,7 +22,7 @@ include("functions.php");
 include("actions.php");
 
 // Troubleshooting
-//print("session:<pre class='noPrint'>".print_r($_SESSION, true)."</pre>");
+print("session:<pre class='noPrint'>".print_r($_SESSION, true)."</pre>");
 
 ?>
 
@@ -35,6 +31,8 @@ include("actions.php");
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<link rel="stylesheet" type="text/css" href="variant.css" media="screen,projection" title="Variant Portal" />
 		<link rel="stylesheet" type="text/css" href="print.css" media="print">
+		<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+		<script type="text/javascript" src="js/script.js" ></script>
 
 		<title>Dr Strainlove</title>
 	</head>
@@ -66,7 +64,7 @@ include("actions.php");
 				<ul id="navitab">
 					<li><a class="<?php echo ($_GET['mode'] == 'search' && $_GET['type'] == 'word' ? 'current' : NULL); ?>" href="index.php?mode=search&amp;type=word">Search strains</a></li>
 					<li><a class="<?php echo ($_GET['mode'] == 'search' && $_GET['type'] == 'number' ? 'current' : NULL); ?>" href="index.php?mode=search&amp;type=number">List strains</a></li>
-					
+
 					<?php if($_SESSION['Usertype'] == 'Superuser'){ ?>
 						<li><a class="<?php echo ($_GET['mode'] == 'add' ? 'current' : NULL); ?>" href="index.php?mode=add&amp;Line=<?php echo $_SESSION['Line'];?>">Add strain(s)</a></li>
 						<li><a class="<?php echo ($_GET['mode'] == 'addUser' ? 'current' : NULL); ?>" href="index.php?mode=addUser">Add User(s)</a></li>
@@ -82,10 +80,10 @@ include("actions.php");
 			</div>
 
 			<div id="main">
-				<p class="validation-fail">No JS detected! Some functionality disabled!</p>
+				<p id="js-disabled" class="validation-fail">No JS detected! Some functionality disabled!</p>
 
-				<?php	  
-				$value = $_GET['mode']; 
+				<?php
+				$value = $_GET['mode'];
 
 				if ($_SESSION['login'] != '1') {
 					include("login.php");
@@ -134,7 +132,7 @@ include("actions.php");
 				<div class='noPrint'>
 					<br><br>
 					<p class="block"><strong>Please note:</strong> <?php echo $helpmessage . " " . $helpmessage2; ?></p>
-				</div>    
+				</div>
 			</div> <!-- id="main" -->
 
 			<div class='noPrint'>
@@ -144,6 +142,4 @@ include("actions.php");
 			</div>
 		</div> <!-- id="container" -->
 	</body>
-	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-	<script type="text/javascript" src="js/script.js" ></script>
 </html>
