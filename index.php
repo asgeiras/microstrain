@@ -22,7 +22,7 @@ include("functions.php");
 include("actions.php");
 
 // Troubleshooting
-print("session:<pre class='noPrint'>".print_r($_SESSION, true)."</pre>");
+//print("session:<pre class='noPrint'>".print_r($_SESSION, true)."</pre>");
 
 ?>
 
