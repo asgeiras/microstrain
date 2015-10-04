@@ -4,24 +4,29 @@
 // Check user rights
 if($_SESSION['Usertype'] == 'Superuser') {
 
-	$helpmessage = "Before you press the save button, please verify that you changed the strain information correctly. To update the timestamp in the \"Created\" column, click the checkbox."; 
-
 	//Begin List selected strains
 	if ($_GET['mode'] == 'myList') {
 		$selected = $_POST['selected'];
 		$list = $selected;
 
-		// Prepare parameters for strains in list
-		$listInQuery = array();
-		for($i = 1; $i <= count($list); $i++){
-			$listInQuery[$i] = ":list_" . $i;
-		}
-		$listInQuery = implode(", ", $listInQuery);
-		$numberOfListParameters = count($list);
+		if(isset($list)){
+			// Set help message
+			$helpmessage = "Before you press the save button, please verify that you changed the strain information correctly. To update the timestamp in the \"Created\" column, click the checkbox.";
 
-		$message = "You selected the following ";
-		$sql = "SELECT * FROM strains WHERE Strain IN (" . $listInQuery . ")";
-		$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain IN (" . $listInQuery . ")";
+			// Prepare parameters for strains in list
+			$listInQuery = array();
+			for($i = 1; $i <= count($list); $i++){
+				$listInQuery[$i] = ":list_" . $i;
+			}
+			$listInQuery = implode(", ", $listInQuery);
+			$numberOfListParameters = count($list);
+
+			$message = "You selected the following ";
+			$sql = "SELECT * FROM strains WHERE Strain IN (" . $listInQuery . ")";
+			$sql2 = "SELECT COUNT(Strain) FROM strains WHERE Strain IN (" . $listInQuery . ")";
+		} else {
+			$helpmessage = "You selected nothing to edit.";
+		}
 	}
 	//End List selected strains
 
@@ -35,7 +40,7 @@ if($_SESSION['Usertype'] == 'Superuser') {
 			$stmt->bindParam(":list_" . $i, $list[$i-1]);
 			$stmtTotal->bindParam(":list_" . $i, $list[$i-1]);
 		}
-		
+
 		// Execute statement
 		$stmt->execute();
 		$stmtTotal->execute();
@@ -64,7 +69,7 @@ if($_SESSION['Usertype'] == 'Superuser') {
 			echo "<form name='strainstoupdate' method='post' action='index.php?mode=edit2'>";
 			    echo "<input type='hidden' name='form-type' id='form-type' value='edit'>";
 				echo "<input type='submit' title='Save the changes' name='save' value='save'>";
-				
+
 				$strainIndex = 0;
 
 				// Loop through all strains
@@ -73,12 +78,12 @@ if($_SESSION['Usertype'] == 'Superuser') {
 					$comment = htmlspecialchars($row['Comment']);
 
 					echo "<tr>";
-						echo "<td>";    
+						echo "<td>";
 							echo 'DA' . $row['Strain'];
 							echo "<input type='hidden' name='Strain[" . $strainIndex . "]' value='" . $row['Strain'] . "'>";
 						echo "</td>";
 
-						echo "<td>"; 
+						echo "<td>";
 							echo $genotype . "<br><br>";
 							echo "<textarea type='text' rows=3 cols=40 name='Genotype[" . $strainIndex . "]'>" . $row['Genotype'] . "</textarea>\n";
 						echo "</td>";
@@ -103,7 +108,7 @@ if($_SESSION['Usertype'] == 'Superuser') {
 							}
 						echo "</td>";
 
-						echo "<td>"; 
+						echo "<td>";
 							echo $comment . "<br><br>";
 							echo "<textarea type='text' rows=3 cols=40 name='Comment[" . $strainIndex . "]'>" . $row['Comment'] . "</textarea>\n";
 						echo "</td>";
@@ -118,7 +123,7 @@ if($_SESSION['Usertype'] == 'Superuser') {
 							}
 						echo "</td>";
 
-						echo "<td>"; 
+						echo "<td>";
 							if ($row['Created'] == "0000-00-00 00:00:00") {
 								echo "<span style='color: grey'>(Not entered)</span><br>";
 							} else {
@@ -135,7 +140,7 @@ if($_SESSION['Usertype'] == 'Superuser') {
 
 			echo "</form>";
 		echo "</table>";
-		
+
 		// Close the mysql connection
 		$stmt->closeCursor();
 		$stmtTotal->closeCursor();

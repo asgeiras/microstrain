@@ -168,8 +168,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'edit'){
 
 			// Define variables
 			$genotype  = str_replace(array("\r", "\r\n", "\n"), " ", $_POST['Genotype'][$i]);
-			$donor     = $_POST['Donor'][$i];
-			$recipient = $_POST['Recipient'][$i];
+			$donor     = intval($_POST['Donor'][$i]);
+			$recipient = intval($_POST['Recipient'][$i]);
 			$comment   = str_replace(array("\r", "\r\n", "\n"), " ", $_POST['Comment'][$i]);
 			$signature = $_POST['Signature'][$i];
 			$strain    = $_POST['Strain'][$i];
@@ -298,8 +298,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['form-type'] == 'add' && $_PO
 				if($test[$i] != "EMPTY"){
 					// Prepare variables
 					$genotype = str_replace(array("\r", "\r\n", "\n"), " ", $_POST["txtGenotype"][$i]);
-					$donor = $_POST["txtDonor"][$i];
-					$recipient = $_POST["txtRecipient"][$i];
+					$donor = intval($_POST["txtDonor"][$i]);
+					$recipient = intval($_POST["txtRecipient"][$i]);
 					$comment = str_replace(array("\r", "\r\n", "\n"), " ", $_POST["txtComment"][$i]);
 					$signature = $_POST["txtSignature"];
 

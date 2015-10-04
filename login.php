@@ -4,7 +4,7 @@ $helpmessage = "You need to log in to access this page.";
 
 ?>
 
-<form name="login" id='login' method="POST" action="index.php">
+<form name="login" id='login' method="POST" action="index.php?mode=search&amp;type=word">
 	<p>
 		Username: <input type='text' name='username'>
 		Password: <input type='password' name='password'>

@@ -1,6 +1,6 @@
 <?php
 
-// TODO: Use GET automatically
+header('Content-Type: text/html; charset=utf-8');
 
 // Start the session
 session_start();
@@ -29,6 +29,7 @@ include("actions.php");
 <html>
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta charset="utf-8" />
 		<link rel="stylesheet" type="text/css" href="variant.css" media="screen,projection" title="Variant Portal" />
 		<link rel="stylesheet" type="text/css" href="print.css" media="print">
 		<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
